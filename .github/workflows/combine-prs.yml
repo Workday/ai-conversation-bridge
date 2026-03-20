@@ -1,0 +1,26 @@
+name: Combine Dependabot PRs
+
+on:
+  schedule:
+    - cron: "0 3 * * 3" # Wednesday at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+jobs:
+  combine-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Combine PRs
+        id: combine-prs
+        uses: github/combine-prs@v5.2.0
+        with:
+          branch_prefix: "dependabot"
+          pr_title: "Combined Dependabot Updates"
+          ci_required: "true"
+          autoclose: "true"
+          labels: "dependencies"
