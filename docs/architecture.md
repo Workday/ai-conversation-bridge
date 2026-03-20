@@ -1,6 +1,9 @@
 # Architecture
 
 ## Overview
+<p align="center">
+   <img width="900" height="490" alt="high level architecture" src="https://github.com/user-attachments/assets/cdd3bcc0-ece8-48ab-9631-0006513cb5a8" />
+</p>
 
 The AI Conversation Bridge is a reference architecture for connecting enterprise messaging platforms to Workday through AI-powered orchestration. It addresses four key challenges in the APJ region:
 
