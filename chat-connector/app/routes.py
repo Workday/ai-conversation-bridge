@@ -6,7 +6,7 @@ from app.config import Config
 from app.services.flowise import FlowiseClient
 from app.services.lineworks import LineWorksClient
 from app.services.openrouter import OpenRouterClient
-from app.services.response_validator import ResponseValidator
+from app.response_validator import ResponseValidator
 
 bp = Blueprint('main', __name__)
 logger = logging.getLogger(__name__)
