@@ -1,5 +1,15 @@
 # AI Conversation Bridge
 
+<p align="center"><sub>
+  English |
+  <a href="i18n/zh-Hans/README.md">简体中文</a> |
+  <a href="i18n/zh-Hant/README.md">繁體中文</a> |
+  <a href="i18n/ja/README.md">日本語</a> |
+  <a href="i18n/ko/README.md">한국어</a>
+</sub></p>
+
+---
+
 A reference architecture that connects enterprise messaging apps (LINE WORKS, WeChat, Feishu, etc.) to Workday using AI-powered orchestration. It's built for markets where you need to meet workers in the apps they already use every day.
 
 

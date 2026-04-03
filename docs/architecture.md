@@ -1,5 +1,15 @@
 # Architecture
 
+<p align="center"><sub>
+  English |
+  <a href="../i18n/zh-Hans/docs/architecture.md">简体中文</a> |
+  <a href="../i18n/zh-Hant/docs/architecture.md">繁體中文</a> |
+  <a href="../i18n/ja/docs/architecture.md">日本語</a> |
+  <a href="../i18n/ko/docs/architecture.md">한국어</a>
+</sub></p>
+
+---
+
 ## Overview
 <p align="center">
    <img width="900" height="490" alt="high level architecture" src="https://github.com/user-attachments/assets/cdd3bcc0-ece8-48ab-9631-0006513cb5a8" />
