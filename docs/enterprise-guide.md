@@ -1,5 +1,15 @@
 # Enterprise Hardening Guide
 
+<p align="center"><sub>
+  English |
+  <a href="../i18n/zh-Hans/docs/enterprise-guide.md">简体中文</a> |
+  <a href="../i18n/zh-Hant/docs/enterprise-guide.md">繁體中文</a> |
+  <a href="../i18n/ja/docs/enterprise-guide.md">日本語</a> |
+  <a href="../i18n/ko/docs/enterprise-guide.md">한국어</a>
+</sub></p>
+
+---
+
 Recommendations for teams moving the AI Conversation Bridge from prototype to production. This guide covers what comes next.
 
 > **Start here:** The two highest-leverage steps are infrastructure choices, not code changes.

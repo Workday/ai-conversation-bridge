@@ -1,5 +1,15 @@
 # Demo MCP Server
 
+<p align="center"><sub>
+  English |
+  <a href="../i18n/zh-Hans/mcp-demo-server/README.md">简体中文</a> |
+  <a href="../i18n/zh-Hant/mcp-demo-server/README.md">繁體中文</a> |
+  <a href="../i18n/ja/mcp-demo-server/README.md">日本語</a> |
+  <a href="../i18n/ko/mcp-demo-server/README.md">한국어</a>
+</sub></p>
+
+---
+
 A lightweight MCP server with mock Workday tools for development and demo purposes. It provides a handful of common Workday actions — time-off requests, worker lookups, and employee data — backed by static sample data instead of a real Workday tenant.
 
 **This is not a production MCP server.** In production, your Flowise flow should connect to the official Workday MCP server endpoints via Agent Gateway, which provides authenticated access to the full Workday API surface.

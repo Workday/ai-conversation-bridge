@@ -1,5 +1,15 @@
 # Flowise Flow Templates
 
+<p align="center"><sub>
+  English |
+  <a href="../i18n/zh-Hans/flowise/README.md">简体中文</a> |
+  <a href="../i18n/zh-Hant/flowise/README.md">繁體中文</a> |
+  <a href="../i18n/ja/flowise/README.md">日本語</a> |
+  <a href="../i18n/ko/flowise/README.md">한국어</a>
+</sub></p>
+
+---
+
 This folder contains exportable Flowise flow templates that form the **core orchestration layer** of the AI Conversation Bridge. The Flowise flow is the actual "bridge" — it connects LLMs, handles intent recognition, and calls Workday tools via MCP.
 
 ## Prerequisites

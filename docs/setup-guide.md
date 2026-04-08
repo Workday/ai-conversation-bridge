@@ -1,5 +1,15 @@
 # Setup Guide
 
+<p align="center"><sub>
+  English |
+  <a href="../i18n/zh-Hans/docs/setup-guide.md">简体中文</a> |
+  <a href="../i18n/zh-Hant/docs/setup-guide.md">繁體中文</a> |
+  <a href="../i18n/ja/docs/setup-guide.md">日本語</a> |
+  <a href="../i18n/ko/docs/setup-guide.md">한국어</a>
+</sub></p>
+
+---
+
 This guide walks through setting up each component of the AI Conversation Bridge.
 
 > **Important:** All components must be deployed to **public-facing cloud environments** so they can communicate with each other and receive webhooks from external platforms. This guide uses Google Cloud Run as the example, but any container platform with a public HTTPS endpoint works (AWS App Runner, Azure Container Apps, Alibaba Cloud Elastic Container Instance, Tencent Kubernetes Engine, etc.).

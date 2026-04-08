@@ -1,5 +1,15 @@
 # Contributing to AI Conversation Bridge
 
+<p align="center"><sub>
+  English |
+  <a href="i18n/zh-Hans/CONTRIBUTING.md">简体中文</a> |
+  <a href="i18n/zh-Hant/CONTRIBUTING.md">繁體中文</a> |
+  <a href="i18n/ja/CONTRIBUTING.md">日本語</a> |
+  <a href="i18n/ko/CONTRIBUTING.md">한국어</a>
+</sub></p>
+
+---
+
 This project is a **reference architecture** — most teams will fork and customize it for their own deployments. If you'd like to contribute improvements back upstream (bug fixes, new chat platform adapters, documentation, new demo MCP tools, new Flowise flow templates), this guide explains how.
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
