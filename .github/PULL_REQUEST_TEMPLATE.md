@@ -23,3 +23,4 @@ Describe how you tested these changes.
 - [ ] I have updated documentation as needed
 - [ ] My code follows the existing style
 - [ ] I have not committed any secrets or credentials
+- [ ] By submitting this pull request, I confirm that you may use my contribution under the terms of the LICENSE.md file.
