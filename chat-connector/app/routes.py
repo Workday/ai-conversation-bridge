@@ -3,17 +3,19 @@ import logging
 from flask import Blueprint, current_app, jsonify, request
 
 from app.config import Config
+from app.response_validator import ResponseValidator
+from app.services.dingtalk import DingTalkClient
 from app.services.flowise import FlowiseClient
 from app.services.lineworks import LineWorksClient
 from app.services.openrouter import OpenRouterClient
-from app.response_validator import ResponseValidator
 
 bp = Blueprint('main', __name__)
 logger = logging.getLogger(__name__)
 
 lw_client = LineWorksClient(Config)
+dingtalk_client = DingTalkClient(Config)
 
-if Config.CHAT_PROVIDER == 'openrouter':
+if Config.AI_PROVIDER == 'openrouter':
     logger.info("Using OpenRouter as chat provider (demo/experiment)")
     ai_client = OpenRouterClient(
         Config.OPENROUTER_API_KEY,
@@ -34,11 +36,28 @@ else:
 @bp.route('/')
 def health():
     """Health check endpoint."""
-    return jsonify({"status": "ok", "provider": Config.CHAT_PROVIDER}), 200
+    return jsonify({
+        "status": "ok",
+        "ai_provider": Config.AI_PROVIDER,
+        "chat_clients": ["lineworks", "dingtalk"],
+    }), 200
+
+
+def get_ai_response(user_text: str, session_id: str) -> str:
+    ai_response_text = ai_client.get_completion(user_text, user_id=session_id)
+    return ResponseValidator.validate(
+        str(ai_response_text) if ai_response_text else "",
+        user_message=user_text
+    )
+
+
+def message_too_long_response() -> str:
+    return f"Your message is too long. Please keep it under {Config.MAX_MESSAGE_LENGTH} characters."
 
 
 @bp.route('/callback', methods=['POST'])
-def callback():
+@bp.route('/lineworks/callback', methods=['POST'])
+def lineworks_callback():
     """Handle LINE WORKS message callbacks."""
     try:
         raw_body = request.get_data()
@@ -81,7 +100,7 @@ def callback():
             lw_client.send_message(user_id, {
                 "content": {
                     "type": "text",
-                    "text": f"Your message is too long. Please keep it under {Config.MAX_MESSAGE_LENGTH} characters."
+                    "text": message_too_long_response()
                 }
             })
             return 'OK', 200
@@ -90,11 +109,7 @@ def callback():
             current_app.logger.error("Missing one or more LINE WORKS environment variables.")
             return 'Internal Server Error', 500
 
-        ai_response_text = ai_client.get_completion(user_text, user_id=user_id)
-        ai_response_text = ResponseValidator.validate(
-            str(ai_response_text) if ai_response_text else "",
-            user_message=user_text
-        )
+        ai_response_text = get_ai_response(user_text, session_id=f"lineworks:{user_id}")
 
         reply_content = {
             "content": {
@@ -110,4 +125,41 @@ def callback():
 
     except Exception as e:
         current_app.logger.error(f"Error processing callback: {e}")
+        return 'Internal Server Error', 500
+
+
+@bp.route('/dingtalk/callback', methods=['POST'])
+def dingtalk_callback():
+    """Handle DingTalk HTTP-mode robot callbacks."""
+    try:
+        data = request.get_json(silent=True)
+        if data is None:
+            current_app.logger.warning("Invalid or empty DingTalk JSON body")
+            return 'Bad Request', 400
+
+        message = dingtalk_client.parse_message(data)
+        if message is None:
+            return 'OK', 200
+
+        should_process, reason = dingtalk_client.should_process(message)
+        if not should_process:
+            current_app.logger.info(reason)
+            return 'OK', 200
+
+        if len(message.text) > Config.MAX_MESSAGE_LENGTH:
+            current_app.logger.warning(
+                f"DingTalk message from {message.sender_user_id} exceeds max length "
+                f"({len(message.text)} > {Config.MAX_MESSAGE_LENGTH})"
+            )
+            dingtalk_client.send_text(message.session_webhook, message_too_long_response())
+            return 'OK', 200
+
+        ai_response_text = get_ai_response(message.text, session_id=message.session_id)
+        dingtalk_client.send_text(message.session_webhook, ai_response_text)
+        current_app.logger.info(f"Sent DingTalk reply to user {message.sender_user_id}")
+
+        return 'OK', 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error processing DingTalk callback: {e}")
         return 'Internal Server Error', 500

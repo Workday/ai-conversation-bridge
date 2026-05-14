@@ -60,7 +60,7 @@ The project has three main pieces. **Flowise is the brain** — it connects to t
 
 - A container hosting platform with public HTTPS endpoints (like [Google Cloud Run](https://cloud.google.com/run))
 - A [Flowise](https://flowiseai.com/) instance (cloud or self-hosted, as long as it's public-facing)
-- LINE WORKS Bot credentials (for the chat connector)
+- LINE WORKS Bot credentials and/or DingTalk robot access (for the chat connector)
 
 *Note: Everything needs to be deployed to a public-facing cloud environment. We use Google Cloud Run in these examples, but any container platform works (AWS App Runner, Azure Container Apps, Alibaba Cloud Elastic Container Instance, Tencent Kubernetes Engine, etc.).*
 
@@ -97,21 +97,26 @@ gcloud run deploy chat-connector \
   --source chat-connector
 ```
 
-> **Important:** Don't forget to set your environment variables in the Cloud Run console after deploying! You will need to configure your AI provider (like `CHAT_PROVIDER` and `FLOWISE_API_URL`) as well as your LINE WORKS bot credentials. See `chat-connector/.env.example` for the full list of required variables.
+> **Important:** Don't forget to set your environment variables in the Cloud Run console after deploying! You will need to configure your AI provider (like `AI_PROVIDER` and `FLOWISE_API_URL`) as well as any chat channel settings. See `chat-connector/.env.example` for the full list of variables.
 
-### 5. Connect LINE WORKS
+### 5. Connect Chat Channels
 
-Set your LINE WORKS Bot webhook URL to your new chat connector's public URL + `/callback` (e.g., `https://chat-connector-abc123.us-west1.run.app/callback`).
+Set your chat platform callback URLs to the channel-specific endpoints:
 
-## Chat Providers
+- LINE WORKS: `https://chat-connector-abc123.us-west1.run.app/lineworks/callback`
+- DingTalk HTTP robot: `https://chat-connector-abc123.us-west1.run.app/dingtalk/callback`
 
-The chat connector supports two AI backends out of the box:
+The legacy `/callback` path is still accepted as a LINE WORKS alias for existing deployments.
+
+## AI Providers
+
+The chat connector supports two AI backends out of the box. `CHAT_PROVIDER` is still accepted as a fallback, but new deployments should use `AI_PROVIDER`.
 
 
 | Provider              | When to use it                                                                       | Config                     |
 | --------------------- | ------------------------------------------------------------------------------------ | -------------------------- |
-| **Flowise** (default) | Production — gives you full orchestration and MCP tool calling.                        | `CHAT_PROVIDER=flowise`    |
-| **OpenRouter**        | Demos/experimenting — great for quick testing with any LLM without setting up Flowise. | `CHAT_PROVIDER=openrouter` |
+| **Flowise** (default) | Production — gives you full orchestration and MCP tool calling.                        | `AI_PROVIDER=flowise`    |
+| **OpenRouter**        | Demos/experimenting — great for quick testing with any LLM without setting up Flowise. | `AI_PROVIDER=openrouter` |
 
 
 ## Demo MCP Tools
@@ -141,7 +146,7 @@ The demo MCP server comes with mock Workday tools and data so you can test the w
 ```text
 ai-conversation-bridge/
 ├── chat-connector/          # Webhook adapter (Flask, Python)
-│   ├── app/services/        # Messaging adapters (LINE WORKS) + AI clients
+│   ├── app/services/        # Messaging adapters (LINE WORKS, DingTalk) + AI clients
 │   ├── Dockerfile
 │   └── .env.example
 ├── flowise/                 # Flow templates (the core bridge logic)

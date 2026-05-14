@@ -34,7 +34,7 @@ The chat connector logs user IDs and message metadata. In production, log output
 
 ### Rate Limiting
 
-The `/callback` endpoint is publicly accessible. Without rate limiting, a misconfigured webhook or abuse scenario can exhaust downstream quotas (Flowise, LLM provider, LINE WORKS). Add per-IP and per-user rate limits at the chat connector layer. For multi-instance deployments, back the rate limiter with a shared store (e.g., Redis) rather than in-memory counters.
+The channel callback endpoints (`/lineworks/callback`, `/dingtalk/callback`, and the legacy LINE WORKS `/callback` alias) are publicly accessible. Without rate limiting, a misconfigured webhook or abuse scenario can exhaust downstream quotas (Flowise, LLM provider, or chat platform APIs). Add per-IP and per-user rate limits at the chat connector layer. For multi-instance deployments, back the rate limiter with a shared store (e.g., Redis) rather than in-memory counters.
 
 ### Model Selection and Temperature
 
@@ -58,7 +58,7 @@ Transient failures (network blips, 502/503 from Flowise, token refresh races) ar
 
 ### Correlation IDs and Structured Logging
 
-When a user reports "the bot didn't respond," you need to trace a single request across the chat connector, Flowise, and MCP pipeline. Generate a request ID at the `/callback` entry point, propagate it as an HTTP header through downstream calls, and attach it to all log entries. Structured JSON logging (rather than plain text) makes these traces queryable in Cloud Run, CloudWatch, and similar platforms.
+When a user reports "the bot didn't respond," you need to trace a single request across the chat connector, Flowise, and MCP pipeline. Generate a request ID at the channel callback entry point, propagate it as an HTTP header through downstream calls, and attach it to all log entries. Structured JSON logging (rather than plain text) makes these traces queryable in Cloud Run, CloudWatch, and similar platforms.
 
 ### Prompt Injection Defenses
 

@@ -13,8 +13,18 @@ class Config:
     BASE_API_URL = "https://www.worksapis.com/v1.0"
     BASE_AUTH_URL = "https://auth.worksmobile.com/oauth2/v2.0"
 
-    # Chat Provider: "flowise" (recommended) or "openrouter" (demo/experiment)
-    CHAT_PROVIDER = os.environ.get("CHAT_PROVIDER", "flowise").lower()
+    # DingTalk HTTP robot callbacks
+    DINGTALK_ALLOWED_USERS = os.environ.get("DINGTALK_ALLOWED_USERS", "")
+    DINGTALK_ALLOW_ALL_USERS = os.environ.get("DINGTALK_ALLOW_ALL_USERS", "false").lower() == "true"
+    DINGTALK_REQUIRE_MENTION = os.environ.get("DINGTALK_REQUIRE_MENTION", "true").lower() == "true"
+    DINGTALK_GROUP_SESSIONS_PER_USER = (
+        os.environ.get("DINGTALK_GROUP_SESSIONS_PER_USER", "true").lower() == "true"
+    )
+
+    # AI Provider: "flowise" (recommended) or "openrouter" (demo/experiment).
+    # CHAT_PROVIDER is kept as a temporary fallback for existing deployments.
+    AI_PROVIDER = os.environ.get("AI_PROVIDER", os.environ.get("CHAT_PROVIDER", "flowise")).lower()
+    CHAT_PROVIDER = AI_PROVIDER
 
     # OpenRouter API (demo/experiment)
     OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
