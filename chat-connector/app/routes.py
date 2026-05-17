@@ -1,17 +1,20 @@
 import logging
+import threading
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, copy_current_request_context, current_app, jsonify, request
 
 from app.config import Config
+from app.response_validator import ResponseValidator
+from app.services.feishu import FeishuClient, process_im_text_message
 from app.services.flowise import FlowiseClient
 from app.services.lineworks import LineWorksClient
 from app.services.openrouter import OpenRouterClient
-from app.response_validator import ResponseValidator
 
 bp = Blueprint('main', __name__)
 logger = logging.getLogger(__name__)
 
 lw_client = LineWorksClient(Config)
+feishu_client = FeishuClient(Config.FEISHU_APP_ID, Config.FEISHU_APP_SECRET)
 
 if Config.CHAT_PROVIDER == 'openrouter':
     logger.info("Using OpenRouter as chat provider (demo/experiment)")
@@ -111,3 +114,34 @@ def callback():
     except Exception as e:
         current_app.logger.error(f"Error processing callback: {e}")
         return 'Internal Server Error', 500
+
+
+@bp.route('/webhook', methods=['POST'])
+def feishu_webhook():
+    """Handle Feishu (Lark) event subscription callbacks."""
+    body = request.get_json(silent=True) or {}
+    logger.info("Feishu webhook received")
+
+    if body.get("type") == "url_verification":
+        if body.get("token") == Config.FEISHU_VERIFICATION_TOKEN:
+            return jsonify({"challenge": body.get("challenge")})
+        logger.error("Feishu URL verification token mismatch")
+        return jsonify({"error": "Forbidden"}), 403
+
+    if body.get("header", {}).get("event_type") == "im.message.receive_v1":
+        event = body.get("event") or {}
+
+        @copy_current_request_context
+        def worker():
+            try:
+                process_im_text_message(
+                    event=event,
+                    feishu=feishu_client,
+                    ai_client=ai_client,
+                )
+            except Exception as e:
+                current_app.logger.error("Feishu background worker failed: %s", e)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    return jsonify({"code": 0, "msg": "ok"}), 200
