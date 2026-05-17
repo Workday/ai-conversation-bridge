@@ -74,10 +74,10 @@ class OpenRouterClient:
                 ai_text = data['choices'][0]['message']['content']
                 if ai_text:
                     ai_text = ai_text.strip()
-                if user_id:
-                    self._append_to_history(user_id, "assistant", ai_text)
-                logger.info(f"OpenRouter responded in {elapsed:.1f}s")
-                return ai_text
+                    if user_id:
+                        self._append_to_history(user_id, "assistant", ai_text)
+                    logger.info(f"OpenRouter responded in {elapsed:.1f}s")
+                    return ai_text
             else:
                 logger.error(f"Unexpected OpenRouter response format: {data}")
                 return "I'm not sure how to respond to that."

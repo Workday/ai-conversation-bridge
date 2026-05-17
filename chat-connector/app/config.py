@@ -13,6 +13,11 @@ class Config:
     BASE_API_URL = "https://www.worksapis.com/v1.0"
     BASE_AUTH_URL = "https://auth.worksmobile.com/oauth2/v2.0"
 
+    # Feishu (Lark) Open Platform
+    FEISHU_VERIFICATION_TOKEN = os.environ.get("FEISHU_VERIFICATION_TOKEN")
+    FEISHU_APP_ID = os.environ.get("FEISHU_APP_ID")
+    FEISHU_APP_SECRET = os.environ.get("FEISHU_APP_SECRET")
+
     # Chat Provider: "flowise" (recommended) or "openrouter" (demo/experiment)
     CHAT_PROVIDER = os.environ.get("CHAT_PROVIDER", "flowise").lower()
 
