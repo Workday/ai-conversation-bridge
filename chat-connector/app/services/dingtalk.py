@@ -2,6 +2,7 @@ import logging
 from dataclasses import dataclass
 
 import httpx
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -95,11 +96,20 @@ class DingTalkClient:
             return f"dingtalk:{conversation_id}:{sender_user_id}"
         return f"dingtalk:{conversation_id}"
 
+    def generate_title_from_text(self, text: str, max_length: int = 50) -> str:
+        # 1. Take the first line (works for Chinese, English, etc.)
+        first_line = text.split('\n')[0].strip()
+        # 2. Remove leading Markdown heading markers like #, ##, ###
+        first_line = re.sub(r'^#{1,6}\s*', '', first_line)
+        # 3. Truncate to max length
+        return first_line[:max_length].rstrip()
+
     def send_text(self, session_webhook: str, text: str):
         payload = {
-            "msgtype": "text",
-            "text": {
-                "content": text
+            "msgtype": "markdown",
+            "markdown": {
+                "title": self.generate_title_from_text(text),
+                "text": text
             }
         }
         response = httpx.post(session_webhook, json=payload, timeout=30.0)
