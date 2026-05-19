@@ -61,6 +61,7 @@ class DingTalkClient:
             return None
 
         text = self._extract_text(payload)
+        text = text.strip() if text else ""
         if not text:
             logger.info("Ignoring DingTalk message without text content.")
             return None
@@ -90,8 +91,8 @@ class DingTalkClient:
         if not is_allowed_session_webhook(session_webhook):
             logger.warning(
                 "Ignoring DingTalk message with sessionWebhook outside the allowed "
-                "DingTalk hosts. sessionWebhook=%s",
-                session_webhook,
+                "DingTalk hosts. host=%s",
+                urlparse(session_webhook).hostname,
             )
             return None
 
@@ -101,7 +102,7 @@ class DingTalkClient:
             conversation_type=conversation_type,
             sender_user_id=sender_user_id,
             session_webhook=session_webhook,
-            text=text.strip(),
+            text=text,
             is_in_at_list=bool(payload.get("isInAtList")),
             session_id=self.get_session_id(conversation_id, conversation_type, sender_user_id),
         )
