@@ -1,3 +1,5 @@
+"""Flask routes for chat-platform webhooks and health checks."""
+
 import logging
 
 from flask import Blueprint, current_app, jsonify, request
@@ -44,6 +46,7 @@ def health():
 
 
 def get_ai_response(user_text: str, session_id: str) -> str:
+    """Call the configured AI provider and validate the response."""
     ai_response_text = ai_client.get_completion(user_text, user_id=session_id)
     return ResponseValidator.validate(
         str(ai_response_text) if ai_response_text else "",
@@ -52,6 +55,7 @@ def get_ai_response(user_text: str, session_id: str) -> str:
 
 
 def message_too_long_response() -> str:
+    """Return the user-facing error message for over-length messages."""
     return f"Your message is too long. Please keep it under {Config.MAX_MESSAGE_LENGTH} characters."
 
 

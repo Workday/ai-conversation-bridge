@@ -1,7 +1,10 @@
+"""Application configuration loaded from environment variables."""
+
 import os
 
 
 class Config:
+    """Centralized environment-backed settings for the chat connector."""
     # LINE WORKS API
     LW_CLIENT_ID = os.environ.get("LW_API_20_CLIENT_ID")
     LW_CLIENT_SECRET = os.environ.get("LW_API_20_CLIENT_SECRET")
