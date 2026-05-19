@@ -1,3 +1,5 @@
+"""OpenRouter chat-completions client for demo and experiment use."""
+
 import logging
 import time
 from datetime import datetime
@@ -11,6 +13,7 @@ class OpenRouterClient:
     """Demo/experiment chat provider via OpenRouter API."""
 
     def __init__(self, api_key, model, api_url, system_prompt=None, reasoning_effort=None):
+        """Store OpenRouter credentials, model selection, and in-memory history settings."""
         self.api_key = api_key
         self.model = model
         self.api_url = api_url
@@ -21,11 +24,13 @@ class OpenRouterClient:
         self.history_limit = 10
 
     def _get_user_history(self, user_id):
+        """Return the in-memory chat history list for a user, creating it if needed."""
         if user_id not in self.chat_history:
             self.chat_history[user_id] = []
         return self.chat_history[user_id]
 
     def _append_to_history(self, user_id, role, content):
+        """Append a chat turn and trim history to the configured limit."""
         history = self._get_user_history(user_id)
         history.append({"role": role, "content": content})
 
@@ -33,6 +38,7 @@ class OpenRouterClient:
             self.chat_history[user_id] = history[-self.history_limit:]
 
     def _get_dynamic_system_prompt(self):
+        """Build the system prompt, including today's date when configured."""
         current_date = datetime.now().strftime("%Y-%m-%d")
         date_prompt = f"Today's date is {current_date}."
 
@@ -41,6 +47,7 @@ class OpenRouterClient:
         return date_prompt
 
     def get_completion(self, user_message, user_id=None):
+        """Send a chat completion request to OpenRouter and return the assistant reply."""
         if not self.api_key:
             logger.error("OPENROUTER_API_KEY not set.")
             return "I am currently unable to think (API Key missing)."

@@ -1,3 +1,5 @@
+"""Validation helpers for AI responses before delivery to chat users."""
+
 import logging
 import re
 

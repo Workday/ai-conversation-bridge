@@ -1,3 +1,5 @@
+"""Entry point for running the chat connector with Flask's development server."""
+
 import os
 
 from app import create_app

@@ -1,3 +1,5 @@
+"""LINE WORKS bot API client for webhook verification and outbound messages."""
+
 import base64
 import hashlib
 import hmac
@@ -11,7 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 class LineWorksClient:
+    """Client for LINE WORKS OAuth, webhook verification, and bot messaging."""
+
     def __init__(self, config):
+        """Initialize credentials and normalize PEM private key formatting."""
         self.client_id = config.LW_CLIENT_ID
         self.client_secret = config.LW_CLIENT_SECRET
         self.service_account_id = config.LW_SERVICE_ACCOUNT_ID
@@ -46,6 +51,7 @@ class LineWorksClient:
                     break
 
     def validate_config(self):
+        """Return True when required LINE WORKS credentials are present."""
         return all([
             self.client_id,
             self.client_secret,
@@ -77,6 +83,7 @@ class LineWorksClient:
         return hmac.compare_digest(expected_b64, signature)
 
     def _get_jwt(self):
+        """Build a signed JWT for LINE WORKS OAuth token exchange."""
         current_time = datetime.now().timestamp()
         return jwt.encode(
             {
@@ -90,6 +97,7 @@ class LineWorksClient:
         )
 
     def get_access_token(self, scope="bot"):
+        """Return a cached LINE WORKS access token, refreshing it when expired."""
         current_time = datetime.now().timestamp()
 
         # 5-minute buffer before expiry
@@ -119,6 +127,7 @@ class LineWorksClient:
         return self.token_cache['access_token']
 
     def send_message(self, user_id, content):
+        """Send a bot message payload to a LINE WORKS user."""
         access_token = self.get_access_token()
 
         url = f"{self.base_api_url}/bots/{self.bot_id}/users/{user_id}/messages"
