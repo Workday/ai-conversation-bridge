@@ -1,10 +1,30 @@
 import logging
+import re
 from dataclasses import dataclass
+from urllib.parse import urlparse
 
 import httpx
-import re
 
 logger = logging.getLogger(__name__)
+
+# Only allow replies to be sent back to known DingTalk session-webhook hosts.
+# This prevents SSRF where a forged callback supplies an attacker-controlled
+# `sessionWebhook` URL (e.g. a cloud metadata endpoint or internal service).
+ALLOWED_SESSION_WEBHOOK_HOSTS = frozenset({
+    "oapi.dingtalk.com",
+    "api.dingtalk.com",
+})
+
+
+def is_allowed_session_webhook(url: str) -> bool:
+    """Return True if `url` is an https URL on a known DingTalk session-webhook host."""
+    try:
+        parsed = urlparse(url)
+    except ValueError:
+        return False
+    if parsed.scheme != "https":
+        return False
+    return parsed.hostname in ALLOWED_SESSION_WEBHOOK_HOSTS
 
 
 @dataclass
@@ -67,6 +87,13 @@ class DingTalkClient:
         if not session_webhook:
             logger.warning("Ignoring DingTalk message without sessionWebhook.")
             return None
+        if not is_allowed_session_webhook(session_webhook):
+            logger.warning(
+                "Ignoring DingTalk message with sessionWebhook outside the allowed "
+                "DingTalk hosts. sessionWebhook=%s",
+                session_webhook,
+            )
+            return None
 
         return DingTalkMessage(
             msg_id=payload.get("msgId"),
@@ -105,6 +132,10 @@ class DingTalkClient:
         return first_line[:max_length].rstrip()
 
     def send_text(self, session_webhook: str, text: str):
+        # Defense in depth: parse_message already enforces this, but reject here
+        # in case callers ever bypass parse_message.
+        if not is_allowed_session_webhook(session_webhook):
+            raise ValueError("Refusing to POST to non-DingTalk session webhook host.")
         payload = {
             "msgtype": "markdown",
             "markdown": {
@@ -120,9 +151,4 @@ class DingTalkClient:
         text_payload = payload.get("text")
         if isinstance(text_payload, dict) and text_payload.get("content"):
             return str(text_payload.get("content"))
-
-        content = payload.get("content")
-        if content:
-            return str(content)
-
         return None

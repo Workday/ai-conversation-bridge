@@ -94,9 +94,9 @@ DINGTALK_GROUP_SESSIONS_PER_USER=true
 ```
 
 > **Security:** `LW_API_20_BOT_SECRET` enables webhook signature verification — the connector rejects any callback whose `X-WORKS-Signature` header doesn't match. You can find your Bot Secret in the LINE WORKS Developer Console under your bot's details. If omitted, signature verification is skipped with a warning (acceptable for local development, **not for production**).
-
+>
 > **Note on private keys:** When setting `LW_API_20_PRIVATEKEY` in your container platform, newline handling varies. You can paste the key directly (the connector normalizes the format automatically), use literal `\n` characters, or store the key in a secrets manager (recommended). See [Private Key Formatting](#private-key-formatting) below.
-
+>
 > **Compatibility:** `CHAT_PROVIDER` is still accepted as a fallback for existing deployments, but new configuration should use `AI_PROVIDER`.
 
 ### Deploy to Cloud Run
@@ -114,7 +114,7 @@ For sensitive values like `LW_API_20_PRIVATEKEY`, consider using [Google Secret 
 
 ```bash
 gcloud run deploy chat-connector \
-  --source . \
+  --source chat-connector \
   --set-env-vars "AI_PROVIDER=flowise,FLOWISE_API_URL=..." \
   --set-secrets "LW_API_20_PRIVATEKEY=lw-private-key:latest"
 ```
