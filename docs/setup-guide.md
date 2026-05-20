@@ -18,7 +18,7 @@ This guide walks through setting up each component of the AI Conversation Bridge
 
 - A container hosting platform with public URLs (e.g., [Google Cloud Run](https://cloud.google.com/run))
 - A Flowise instance ([cloud](https://flowiseai.com/) or [self-hosted](#self-hosting-flowise) on public-facing infrastructure)
-- LINE WORKS Developer Console access (for bot credentials)
+- LINE WORKS Developer Console access and/or DingTalk Developer Console access (for bot credentials)
 
 ## 1. Demo MCP Server
 
@@ -73,7 +73,7 @@ Prepare your environment variables. You can use `chat-connector/.env.example` as
 
 ```bash
 # Point to your Flowise flow
-CHAT_PROVIDER=flowise
+AI_PROVIDER=flowise
 FLOWISE_API_URL=https://your-flowise.com/api/v1/prediction/<flow-id>
 FLOWISE_API_KEY=your-flowise-api-key
 
@@ -84,11 +84,20 @@ LW_API_20_SERVICE_ACCOUNT_ID=your-service-account-id
 LW_API_20_PRIVATEKEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----"
 LW_API_20_BOT_ID=your-bot-id
 LW_API_20_BOT_SECRET=your-bot-secret
+
+# DingTalk HTTP robot settings
+# Use admin-console employee UserID values. The connector requires DingTalk's senderStaffId field.
+DINGTALK_ALLOWED_USERS=ding-user-id-1,ding-user-id-2
+DINGTALK_ALLOW_ALL_USERS=false
+DINGTALK_REQUIRE_MENTION=true
+DINGTALK_GROUP_SESSIONS_PER_USER=true
 ```
 
 > **Security:** `LW_API_20_BOT_SECRET` enables webhook signature verification — the connector rejects any callback whose `X-WORKS-Signature` header doesn't match. You can find your Bot Secret in the LINE WORKS Developer Console under your bot's details. If omitted, signature verification is skipped with a warning (acceptable for local development, **not for production**).
-
+>
 > **Note on private keys:** When setting `LW_API_20_PRIVATEKEY` in your container platform, newline handling varies. You can paste the key directly (the connector normalizes the format automatically), use literal `\n` characters, or store the key in a secrets manager (recommended). See [Private Key Formatting](#private-key-formatting) below.
+>
+> **Compatibility:** `CHAT_PROVIDER` is still accepted as a fallback for existing deployments, but new configuration should use `AI_PROVIDER`.
 
 ### Deploy to Cloud Run
 
@@ -97,7 +106,7 @@ gcloud run deploy chat-connector \
   --source chat-connector
 ```
 
-> **Important:** Don't forget to set your environment variables in the Cloud Run console after deploying! You will need to configure your AI provider (like `CHAT_PROVIDER` and `FLOWISE_API_URL`) as well as your LINE WORKS bot credentials. See `chat-connector/.env.example` for the full list of required variables.
+> **Important:** Don't forget to set your environment variables in the Cloud Run console after deploying! You will need to configure your AI provider (like `AI_PROVIDER` and `FLOWISE_API_URL`) as well as any channel connector credentials. See `chat-connector/.env.example` for the full list of variables.
 
 After deployment, Cloud Run provides a public URL (e.g., `https://chat-connector-abc123.us-west1.run.app`). You'll use this as your webhook URL.
 
@@ -105,8 +114,8 @@ For sensitive values like `LW_API_20_PRIVATEKEY`, consider using [Google Secret 
 
 ```bash
 gcloud run deploy chat-connector \
-  --source . \
-  --set-env-vars "CHAT_PROVIDER=flowise,FLOWISE_API_URL=..." \
+  --source chat-connector \
+  --set-env-vars "AI_PROVIDER=flowise,FLOWISE_API_URL=..." \
   --set-secrets "LW_API_20_PRIVATEKEY=lw-private-key:latest"
 ```
 
@@ -114,20 +123,36 @@ gcloud run deploy chat-connector \
 
 1. Go to the [LINE WORKS Developer Console](https://developers.worksmobile.com/)
 2. Create a Bot
-3. Set the callback URL to your deployed chat connector's public URL + `/callback` (e.g., `https://chat-connector-abc123.us-west1.run.app/callback`)
+3. Set the callback URL to your deployed chat connector's public URL + `/lineworks/callback` (e.g., `https://chat-connector-abc123.us-west1.run.app/lineworks/callback`)
 4. Set the environment variables on your container platform with the bot credentials
+
+`/callback` is still supported as a backwards-compatible LINE WORKS alias, but new deployments should use `/lineworks/callback`.
+
+### DingTalk HTTP Robot Setup
+
+1. Go to the [DingTalk Developer Console](https://open-dev.dingtalk.com/) and create an enterprise internal app.
+2. Add the Robot capability to the app.
+3. Configure robot message receiving in HTTP mode.
+4. Set the callback URL to your deployed chat connector's public URL + `/dingtalk/callback` (e.g., `https://chat-connector-abc123.us-west1.run.app/dingtalk/callback`).
+5. Create and publish an app version that includes the Robot capability. The app version and the robot capability must both be published before DingTalk includes `senderStaffId` in callbacks.
+6. Add the published robot to an internal group in the same DingTalk organization from the DingTalk chat group settings: open the group, open group settings, go to **Group Management** → **Robots**, then add the published enterprise robot.
+7. Set `DINGTALK_ALLOWED_USERS` to the DingTalk employee UserID values that may use the bot, or set `DINGTALK_ALLOW_ALL_USERS=true` only for controlled demos.
+
+By default, DingTalk direct messages receive a response from allowed users. Group messages require an @mention (`DINGTALK_REQUIRE_MENTION=true`), and group chat sessions are isolated per user (`DINGTALK_GROUP_SESSIONS_PER_USER=true`).
+
+The connector authorizes DingTalk users with `senderStaffId`, which corresponds to the employee UserID available in the DingTalk admin console. It intentionally ignores callbacks that only include encrypted `senderId` values, because those are not practical for admins to retrieve or manage. If logs show `Ignoring DingTalk message without senderStaffId`, confirm the DingTalk app version and robot capability are both published, and that the published robot is installed in an internal group for the same organization.
 
 ### Quick Test with OpenRouter
 
 If you want to test the chat connector without Flowise:
 
 ```bash
-CHAT_PROVIDER=openrouter
+AI_PROVIDER=openrouter
 OPENROUTER_API_KEY=your-openrouter-key
 OPENROUTER_MODEL=z-ai/glm-4.5-air:free
 ```
 
-This connects LINE WORKS directly to an LLM via OpenRouter — useful for verifying the webhook flow works before adding Flowise orchestration.
+This connects configured chat channels directly to an LLM via OpenRouter — useful for verifying webhook flows before adding Flowise orchestration.
 
 ### Private Key Formatting
 

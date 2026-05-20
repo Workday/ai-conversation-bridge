@@ -1,3 +1,5 @@
+"""Flowise prediction API client for the primary AI backend."""
+
 import logging
 import time
 
@@ -10,11 +12,13 @@ class FlowiseClient:
     """Primary chat provider via Flowise prediction API."""
 
     def __init__(self, api_url, api_key=None, timeout=120):
+        """Store Flowise endpoint settings and request timeout."""
         self.api_url = api_url
         self.api_key = api_key
         self.timeout = timeout
 
     def get_completion(self, user_message, user_id=None):
+        """Send a user message to Flowise and return the model response text."""
         if not self.api_url:
             logger.error("FLOWISE_API_URL not set.")
             return "I am currently unable to think (Configuration Error)."

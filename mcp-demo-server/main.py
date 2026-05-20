@@ -1,3 +1,5 @@
+"""Mock Workday MCP server for development and testing."""
+
 import json
 import logging
 import os
@@ -20,6 +22,7 @@ mcp = FastMCP(
 
 
 def _load_mock_data(filename):
+    """Load a JSON mock-data file from the server's mock_data directory."""
     filepath = DATA_DIR / filename
     if filepath.exists():
         with open(filepath) as f:
@@ -28,6 +31,7 @@ def _load_mock_data(filename):
 
 
 def _find_worker(worker_id):
+    """Return the worker record for the given ID, or None if not found."""
     workers = _load_mock_data("workers.json")
     for worker in workers:
         if worker["worker_id"] == worker_id:

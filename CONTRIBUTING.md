@@ -41,13 +41,13 @@ docker compose build         # verify Dockerfiles
 docker compose up --build    # run locally for log inspection / MCP testing
 ```
 
-> **Tip:** To test the chat connector without Flowise, set `CHAT_PROVIDER=openrouter` and provide an `OPENROUTER_API_KEY`. This connects the webhook flow directly to an LLM.
+> **Tip:** To test the chat connector without Flowise, set `AI_PROVIDER=openrouter` and provide an `OPENROUTER_API_KEY`. This connects the webhook flow directly to an LLM. `CHAT_PROVIDER` is still accepted as a backwards-compatible fallback.
 
 ## Making Changes
 
 Follow existing patterns in each component. The key conventions:
 
-- **Chat connector** (`chat-connector/app/`) — Config in `config.py`, routes in `routes.py`, one service file per platform/provider in `services/`. New chat platform adapters should follow `lineworks.py` as a reference. Update `.env.example` with any new required variables.
+- **Chat connector** (`chat-connector/app/`) — Config in `config.py`, routes in `routes.py`, one service file per platform/provider in `services/`. New chat platform adapters should use platform-scoped routes such as `/lineworks/callback` or `/dingtalk/callback`, then call the shared AI pipeline with a platform-scoped session id. Update `.env.example` with any new required variables.
 
 - **Flowise flows** (`flowise/flows/`) — Export flows as JSON from Flowise. Include screenshots in `flowise/screenshots/` and document the flow's purpose and required configuration in `flowise/README.md`. Ensure new flows work with the demo MCP server.
 

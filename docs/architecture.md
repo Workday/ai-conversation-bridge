@@ -49,8 +49,8 @@ The AI Conversation Bridge is a reference architecture for connecting enterprise
 │  └────────────────┘  └────────────────┘  └────────────────┘  └───────────┘   │
 │                                                                              │
 │  LINE WORKS          Webhook adapter     LLM orchestration    Tool execution │
-│  WeChat              Message routing     Intent recognition   Workday APIs   │
-│  KakaoTalk           Response delivery   Jargon translation   Mock data(dev) │
+│  DingTalk            Message routing     Intent recognition   Workday APIs   │
+│  WeChat/KakaoTalk    Response delivery   Jargon translation   Mock data(dev) │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -65,7 +65,7 @@ A thin, stateless Flask application that:
 - Forwards the message to Flowise
 - Sends the AI response back to the user
 
-The connector has **no business logic** — it's purely an adapter. Adding a new chat platform means adding a new service file, not changing the AI pipeline.
+The connector has **no business logic** — it's purely an adapter. Adding a new chat platform means adding a new service file and route, not changing the AI pipeline. Multiple channel connectors can be active in the same deployment; for example, LINE WORKS and DingTalk can both feed the shared Flowise/OpenRouter backend at the same time.
 
 Because it receives webhooks from external messaging platforms, the chat connector **must be deployed to a public-facing environment** with an HTTPS endpoint. Google Cloud Run is the reference example, but any container platform that provides a public URL works (AWS App Runner, Azure Container Apps, Alibaba Cloud Elastic Container Instance, Tencent Kubernetes Engine, etc.).
 
@@ -96,11 +96,13 @@ The demo server has **no authentication** and is not suitable for production use
 ## Request Flow
 
 ```
-1. User sends "How many vacation days do I have?" in LINE WORKS
+1. User sends "How many vacation days do I have?" in LINE WORKS or DingTalk
    │
-2. LINE WORKS POSTs webhook to Chat Connector (/callback)
+2. Chat platform POSTs webhook to Chat Connector
+   - LINE WORKS: /lineworks/callback (or legacy /callback)
+   - DingTalk: /dingtalk/callback
    │
-3. Chat Connector extracts message + userId, calls Flowise prediction API
+3. Chat Connector extracts message + platform-scoped session id, calls Flowise prediction API
    │
 4. Flowise LLM recognizes intent: get_current_user_time_off_balance
    │
@@ -110,7 +112,7 @@ The demo server has **no authentication** and is not suitable for production use
    │
 7. Flowise LLM formats response: "You have 12 vacation days remaining (3 used of 15 total)"
    │
-8. Chat Connector receives response, sends it back to user via LINE WORKS API
+8. Chat Connector receives response, sends it back through the original chat platform
 ```
 
 ## Key Design Principles
@@ -127,7 +129,7 @@ The customer's LLM runs in their own environment. Messages are processed through
 
 ### Platform Agnostic
 
-The chat connector pattern is repeatable for any messaging platform. The Flowise flow doesn't know or care which chat app the user is on.
+The chat connector pattern is repeatable for any messaging platform. The Flowise flow doesn't need platform-specific webhook or reply logic; the connector passes a platform-scoped session id such as `lineworks:<userId>` or `dingtalk:<conversationId>:<senderStaffId>` so simultaneous chat channels do not collide in conversation memory.
 
 ### Production Hardening
 
