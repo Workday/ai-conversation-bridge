@@ -18,7 +18,7 @@
 AI Conversation Bridge 是一套参考架构，通过由 AI 驱动的编排能力，将企业消息平台连接到 Workday。它针对亚太及日本（APJ）地区的四项关键挑战：
 
 1. **监管限制** —— 中国法规限制使用境外托管的 LLM
-2. **语言与上下文差异** —— 企业 LLM 难以妥善处理客户专有术语
+2. **语言与语境差异** —— 企业 LLM 难以妥善处理客户专有术语
 3. **超级应用主导** —— 中国的工作者使用 WeChat（微信），日本使用 LINE，韩国使用 KakaoTalk（韩国主流聊天应用）
 4. **Android 应用无法获取** —— Google Play Store（谷歌应用商店）在中国无法访问
 
@@ -40,19 +40,31 @@ AI Conversation Bridge 是一套参考架构，通过由 AI 驱动的编排能�
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                            AI CONVERSATION BRIDGE                            │
+│                          AI CONVERSATION BRIDGE                              │
 │                                                                              │
 │  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌───────────┐   │
-│  │    聊天平台    │  │                │  │    Flowise     │  │    MCP    │   │
-│  │   （外部）     │─▶│   聊天连接器   │─▶│   （核心）     │─▶│  服务器   │   │
+│  │ Chat Platform  │  │     Chat       │  │    Flowise     │  │    MCP    │   │
+│  │  (External)    │─▶│   Connector    │─▶│  (The Core)    │─▶│  Server   │   │
 │  │                │◀─│                │◀─│                │◀─│ (Workday) │   │
 │  └────────────────┘  └────────────────┘  └────────────────┘  └───────────┘   │
 │                                                                              │
-│  LINE WORKS          Webhook 适配器      LLM 编排            工具执行        │
-│  DingTalk            消息路由            意图识别            Workday API     │
-│  WeChat/KakaoTalk    响应投递            术语转换            模拟数据（开发）│
+│  LINE WORKS          Webhook adapter     LLM orchestration    Tool execution │
+│  DingTalk            Message routing     Intent recognition   Workday APIs   │
+│  WeChat/KakaoTalk    Response delivery   Jargon translation   Mock data(dev) │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
+
+> **图例：** 上图中的框线标签保持英文原样，以确保在 GitHub 上的等宽渲染不会错位；对应中文含义如下。
+
+| 图中标签 | 中文含义 |
+| --- | --- |
+| Chat Platform (External) | 聊天平台（外部） |
+| Chat Connector | 聊天连接器 |
+| Flowise (The Core) | Flowise（核心） |
+| MCP Server (Workday) | MCP 服务器（Workday） |
+| Webhook adapter / Message routing / Response delivery | Webhook 适配器 / 消息路由 / 响应投递 |
+| LLM orchestration / Intent recognition / Jargon translation | LLM 编排 / 意图识别 / 术语转换 |
+| Tool execution / Workday APIs / Mock data (dev) | 工具执行 / Workday API / 模拟数据（开发） |
 
 ## 组件详解
 

@@ -106,6 +106,7 @@ On **first mention** give the English name followed by the local name in full-wi
 | mock data | 模拟数据 | 模擬資料 | — | — |
 | mock tools | 模拟工具 | 模擬工具 | — | — |
 | demo | 演示 | 演示 | — | — |
+| official / standard *(vendor-published — "the official MCP endpoint", "the standard Workday Android app")* | 官方 | 官方 | — | — |
 | server | 服务器 | 伺服器 | — | — |
 | flow | 流程 | 流程 | — | — |
 | flow template | 流程模板 | 流程範本 | — | — |
@@ -127,6 +128,7 @@ On **first mention** give the English name followed by the local name in full-wi
 | default | 默认 | 預設 | — | — |
 | network | 网络 | 網路 | — | — |
 | project | 项目 | 專案 | — | — |
+| context *(business/cultural sense — not an LLM's context window)* | 语境 | 語境 | — | — |
 | documentation | 文档 | 文件 | — | — |
 | file | 文件 | 檔案 | — | — |
 | license | 许可证 | 授權條款 | — | — |
@@ -136,6 +138,10 @@ On **first mention** give the English name followed by the local name in full-wi
 | enterprise hardening guide | 企业强化指南 | 企業強化指南 | — | — |
 
 Four entries above are not new decisions — they were already set by the placeholder titles in `i18n/zh-Hans/` and `i18n/zh-Hant/`: `演示` (demo), `服务器`/`伺服器` (server), `流程模板`/`流程範本` (flow template), and `设置指南`/`設定指南` (setup guide).
+
+### ⚠️ Ambiguous term: context
+
+The English source uses "context" in the everyday sense — company jargon, local cultural nuances (`README.md`: "Language and context", `docs/architecture.md`: "Language/context gaps"). A literal `上下文`/`上下文` reads to a technical audience as an LLM's *context window*, which is not what's meant. Use `语境`/`語境` (linguistic/cultural context) instead. If a future passage really does mean the AI context window, `上下文` is correct there — check which sense applies before translating.
 
 ### ⚠️ False friend: 文件
 
@@ -190,16 +196,50 @@ So `flowise/` (the code directory) becomes `../../flowise/` while `flowise/READM
 ### Code, diagrams, and tables
 
 - **Code fences are verbatim** — commands, env vars, JSON, and any comments inside them. Sample *conversation* text is prose and should be translated so the example reads naturally in the target language.
-- **Markdown table padding doesn't need to align.** CJK characters are double-width, so aligning the pipes in your editor is wasted effort; GitHub renders single-space padding identically.
-- **ASCII diagrams must keep their alignment in display columns**, where CJK characters and full-width punctuation count as **2**. Translating a label inside a box will break the border unless you re-pad it. Check before committing:
+- **Markdown table padding doesn't need to align.** GitHub renders tables as HTML, so single-space padding around the pipes looks identical to hand-aligned columns. Don't spend effort on it.
 
-  ```bash
-  python3 -c "
-  import unicodedata, sys
-  def w(s): return sum(2 if unicodedata.east_asian_width(c) in 'WF' else 1 for c in s)
-  box = [l for l in open(sys.argv[1]).read().split('\n') if l and l[0] in '┌│└']
-  print(sorted({w(l) for l in box}) or 'no box lines found')
-  " i18n/zh-Hans/docs/architecture.md
-  ```
+#### Never put CJK inside a diagram
 
-  A single width in the output means the box is intact. If a label won't fit, prefer leaving that label in English over widening the box.
+A translated label inside a box **cannot be made to align on GitHub**, at any padding. GitHub's code font stack (`ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, …` at 12px) has no CJK coverage, so Han characters fall through to a system font whose advance width is not a whole multiple of the ASCII one. Measured in Chromium on macOS:
+
+| | advance @12px | vs ASCII |
+|---|---|---|
+| ASCII (SF Mono) | 7.225px | 1.0 |
+| CJK (PingFang SC fallback) | 12.0px | **1.66** |
+| Box-drawing `┌ ─ │ ┘` | 7.225px | 1.0 |
+| Arrows `▶ ◀` | 7.225px | 1.0 |
+
+Windows resolves the same stack to Consolas plus a different CJK fallback and lands near **1.8**. The Unicode "East Asian Wide = 2 columns" rule that *terminals* follow does not hold in a browser, and no single padding satisfies 1.66, 1.8 and 2.0 at once. An earlier revision of `i18n/zh-Hans/docs/architecture.md` padded its diagram to a flawless 80 columns under the 2.0 rule and still rendered visibly crooked on GitHub.
+
+Note what the table also shows: **box-drawing glyphs and arrows are not the problem.** They measure exactly one ASCII advance. They *are* East Asian Width category **Ambiguous**, so a renderer is free to draw them wide — but that only bites when CJK on the same line has already pulled the font into a CJK face. Keep the line free of CJK and they can't drift.
+
+So for any diagram whose labels are worth translating:
+
+1. **Reuse the English diagram verbatim** — copy the fenced block byte-for-byte from the English source. It already aligns; leave it alone.
+2. **Put the translations in a markdown table underneath.** Tables are HTML, so font metrics can't touch them. `i18n/zh-Hans/docs/architecture.md` is the worked example: the diagram is byte-identical to `docs/architecture.md`, followed by a 图例 table mapping each English label to its Chinese reading.
+
+Line-oriented blocks are fine with CJK — the numbered request-flow list, the project-structure tree — because nothing to the right of the Chinese has to line up. Translate those normally.
+
+Verify before committing. The check that matters is not column math; it's whether any line inside a fenced block has a vertical border to the *right* of CJK text:
+
+```bash
+python3 -c "
+import sys, unicodedata
+FENCE = chr(96) * 3
+def wide(c): return unicodedata.east_asian_width(c) in 'WF'
+for path in sys.argv[1:]:
+    bad, inside = [], False
+    for n, line in enumerate(open(path), 1):
+        line = line.rstrip('\n')
+        if line.lstrip().startswith(FENCE):
+            inside = not inside
+        elif inside and any(wide(c) for c in line):
+            last = max(i for i, c in enumerate(line) if wide(c))
+            if any(c in '|│' for c in line[last:]):
+                bad.append((n, line))
+    print(path + ': ' + ('OK' if not bad else str(len(bad)) + ' line(s) with CJK inside box art'))
+    for n, line in bad: print('  ' + str(n) + ': ' + line)
+" i18n/zh-Hans/docs/architecture.md i18n/zh-Hans/README.md
+```
+
+It deliberately ignores markdown tables, which sit outside code fences, and trailing CJK comments in tree diagrams like `+-- app/services/   # 消息适配器`, where nothing to the right needs to align.

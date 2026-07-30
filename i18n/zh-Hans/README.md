@@ -24,9 +24,9 @@ https://github.com/user-attachments/assets/9b1ea495-5f23-4ae6-b735-18874acdd327
 在亚太及日本（APJ）地区，尤其是中国、日本和韩国，要让工作者真正用起 AI 工具，会遇到几个主要障碍：
 
 - **监管障碍：** 您无法直接让中国的工作者去使用美国托管的 AI 或 LLM。中美政策环境为此设置了障碍，而且当地法规有时要求使用本地模型。
-- **语言与上下文：** 全球通用模型往往读不懂企业专有术语，也把握不住当地的文化细节。当员工说要请 Golden Week（黄金周）的假时，AI 必须真正听懂这句话。
+- **语言与语境：** 全球通用模型往往读不懂企业专有术语，也把握不住当地的文化细节。当员工说要请 Golden Week（黄金周）的假时，AI 必须真正听懂这句话。
 - **超级应用主导：** 中国的工作者离不开 WeChat 和 Feishu，日本是 LINE，韩国是 KakaoTalk（韩国主流聊天应用）。要求数百万人再去下载一个独立的企业应用，根本行不通。
-- **Android 应用可获取性：** Google Play Store（谷歌应用商店）在中国无法访问，这意味着很大一部分员工甚至下载不到标准的 Workday Android 应用。
+- **Android 应用可获取性：** Google Play Store（谷歌应用商店）在中国无法访问，这意味着很大一部分员工甚至下载不到 Workday 官方的 Android 应用。
 
 结果呢？企业已经拥有 Workday，也想用上 AI，但最需要它的那些工作者却被排除在外。
 
@@ -145,21 +145,21 @@ gcloud run deploy chat-connector \
 
 ```text
 ai-conversation-bridge/
-├── chat-connector/          # Webhook 适配器（Flask、Python）
-│   ├── app/services/        # 消息适配器（LINE WORKS、DingTalk）+ AI 客户端
-│   ├── Dockerfile
-│   └── .env.example
-├── flowise/                 # 流程模板（核心桥接逻辑）
-│   ├── flows/               # 可导出的 Flowise 流程 JSON 文件
-│   └── screenshots/
-├── mcp-demo-server/         # 演示用 Workday MCP 服务器
-│   ├── mock_data/           # 工作者、休假与薪酬示例数据
-│   ├── Dockerfile
-│   └── .env.example
-├── docs/                    # 架构与设置文档
-├── scripts/                 # 本地开发设置（setup.sh）与云端部署（deploy-cloud-run.sh）
-├── docker-compose.yml       # 容器构建/测试工具
-└── .github/                 # Issue 模板、PR 模板
++-- chat-connector/          # Webhook 适配器（Flask、Python）
+|   +-- app/services/        # 消息适配器（LINE WORKS、DingTalk）+ AI 客户端
+|   +-- Dockerfile
+|   +-- .env.example
++-- flowise/                 # 流程模板（核心桥接逻辑）
+|   +-- flows/               # 可导出的 Flowise 流程 JSON 文件
+|   +-- screenshots/
++-- mcp-demo-server/         # 演示用 Workday MCP 服务器
+|   +-- mock_data/           # 工作者、休假与薪酬示例数据
+|   +-- Dockerfile
+|   +-- .env.example
++-- docs/                    # 架构与设置文档
++-- scripts/                 # 本地开发设置（setup.sh）与云端部署（deploy-cloud-run.sh）
++-- docker-compose.yml       # 容器构建/测试工具
++-- .github/                 # Issue 模板、PR 模板
 ```
 
 ## 文档
