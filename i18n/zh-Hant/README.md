@@ -97,7 +97,7 @@ gcloud run deploy chat-connector \
   --source chat-connector
 ```
 
-> **重要：** 部署完成後，別忘了在 Cloud Run 主控台中設定環境變數！您需要設定 AI 供應商（例如 `AI_PROVIDER` 和 `FLOWISE_API_URL`），以及各聊天渠道的相關設定。完整的變數清單請參閱 `chat-connector/.env.example`。
+> **重要：** 部署完成後，別忘了在 Cloud Run 主控台中設定環境變數！您需要設定 `AI_PROVIDER`（選擇 AI 供應商）和 `FLOWISE_API_URL`（Flowise 端點 URL），以及各聊天渠道的相關設定。完整的變數清單請參閱 `chat-connector/.env.example`。
 
 ### 5. 接入聊天渠道
 
