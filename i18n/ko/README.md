@@ -97,7 +97,7 @@ gcloud run deploy chat-connector \
   --source chat-connector
 ```
 
-> **중요:** 배포 후 Cloud Run 콘솔에서 환경 변수를 설정하는 것을 잊지 마세요! AI 제공자(`AI_PROVIDER`, `FLOWISE_API_URL` 등)와 채팅 채널 설정을 구성해야 합니다. 전체 변수 목록은 `chat-connector/.env.example`을 참고하세요.
+> **중요:** 배포 후 Cloud Run 콘솔에서 환경 변수를 설정하는 것을 잊지 마세요! AI 제공자(`AI_PROVIDER`, `FLOWISE_API_URL` 등)와 채팅 채널을 설정해야 합니다. 전체 변수 목록은 `chat-connector/.env.example`을 참고하세요.
 
 ### 5. 채팅 채널 연결
 
@@ -135,7 +135,7 @@ gcloud run deploy chat-connector \
 | `get_more_employee_data` | 확장된 직원 데이터를 가져옵니다 |
 | `get_my_time_off_eligibility` | 현재 사용자가 신청할 수 있는 휴가 유형을 확인합니다 |
 | `get_personal_information` | 개인 정보(주소, 비상 연락처)를 가져옵니다 |
-| `get_today_date_and_day_of_week` | 현재 날짜와 시간을 가져옵니다 |
+| `get_today_date_and_day_of_week` | 오늘 날짜와 요일을 가져옵니다 |
 | `request_my_time_off` | 현재 사용자의 휴가 신청을 제출합니다 |
 
 

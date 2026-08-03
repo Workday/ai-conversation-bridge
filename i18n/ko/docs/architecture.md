@@ -145,4 +145,4 @@ Flowise는 고객이 자체 클라우드 환경에서 관리합니다. 이 프�
 
 ### 프로덕션 보안 강화
 
-이 참조 아키텍처는 기본 보안(Webhook 서명 검증, 입력 길이 제한, 응답 검증)을 구현합니다. 프로덕션 환경에 배포할 때는 속도 제한, PII 처리, 재시도 로직, 신원 매핑, 관찰 가능성, 인프라 선택(공식 Workday MCP 서버, Flowise Cloud Enterprise)에 관한 추가 권장 사항을 [엔터프라이즈 보안 강화 가이드](enterprise-guide.md)에서 확인하세요.
+이 참조 아키텍처는 LINE WORKS 콜백에 대해 `LW_API_20_BOT_SECRET`이 설정된 경우 Webhook 서명을 검증하며, 입력 길이 제한과 응답 검증도 구현합니다. 프로덕션 환경에 배포할 때는 속도 제한, PII 처리, 재시도 로직, 신원 매핑, 관찰 가능성, 인프라 선택(공식 Workday MCP 서버, Flowise Cloud Enterprise)에 관한 추가 권장 사항을 [엔터프라이즈 보안 강화 가이드](enterprise-guide.md)에서 확인하세요.
