@@ -9,7 +9,7 @@ Shared terminology and conventions for translating this project's documentation.
 - **Disagree with an entry?** Change it here *and* in every file that uses it, in one PR. A glossary that drifts from the docs is worse than no glossary.
 - **Filling in a new language?** The `ja` and `ko` columns are `—` because nobody has translated those yet. Fill your column in the same PR as your first translation.
 
-Coverage today: **zh-Hans** (`README.md`, `docs/architecture.md` translated) and **zh-Hant** (terminology agreed, translation pending).
+Coverage today: **zh-Hans** and **zh-Hant** (`README.md`, `docs/architecture.md` translated).
 
 ## Never translate
 
@@ -75,6 +75,8 @@ On **first mention** give the English name followed by the local name in full-wi
 | pipeline | 流水线 | 流程管線 | — | — |
 | runtime | 运行时 | 執行階段 | — | — |
 | deployment | 部署 | 部署 | — | — |
+| configuration / config *(noun — MCP configuration, Flowise configuration)* | 配置 | 組態 | — | — |
+| channel *(chat channel / messaging channel)* | 渠道 | 渠道 | — | — |
 | repository / repo | 仓库 | 儲存庫 | — | — |
 | credentials | 凭据 | 憑證 | — | — |
 | bot / robot | 机器人 | 機器人 | — | — |
@@ -110,7 +112,7 @@ On **first mention** give the English name followed by the local name in full-wi
 | server | 服务器 | 伺服器 | — | — |
 | flow | 流程 | 流程 | — | — |
 | flow template | 流程模板 | 流程範本 | — | — |
-| super-app dominance | 超级应用主导 | 超級應用主導 | — | — |
+| super-app dominance | 超级应用主导 | 超級應用的主導地位 | — | — |
 | worker *(Workday sense)* | 工作者 | 工作者 | — | — |
 | employee | 员工 | 員工 | — | — |
 | worker ID | 工作者 ID | 工作者 ID | — | — |
@@ -138,6 +140,8 @@ On **first mention** give the English name followed by the local name in full-wi
 | enterprise hardening guide | 企业强化指南 | 企業強化指南 | — | — |
 
 Four entries above are not new decisions — they were already set by the placeholder titles in `i18n/zh-Hans/` and `i18n/zh-Hant/`: `演示` (demo), `服务器`/`伺服器` (server), `流程模板`/`流程範本` (flow template), and `设置指南`/`設定指南` (setup guide).
+
+`configuration / config` (組態) is the noun; the verb "configure / set" stays `設定` in zh-Hant (e.g. `設定環境變數`). Do not flatten both into one term.
 
 ### ⚠️ Ambiguous term: context
 
@@ -239,7 +243,7 @@ for path in sys.argv[1:]:
                 bad.append((n, line))
     print(path + ': ' + ('OK' if not bad else str(len(bad)) + ' line(s) with CJK inside box art'))
     for n, line in bad: print('  ' + str(n) + ': ' + line)
-" i18n/zh-Hans/docs/architecture.md i18n/zh-Hans/README.md
+" i18n/zh-Hans/docs/architecture.md i18n/zh-Hans/README.md i18n/zh-Hant/docs/architecture.md i18n/zh-Hant/README.md
 ```
 
 It deliberately ignores markdown tables, which sit outside code fences, and trailing CJK comments in tree diagrams like `+-- app/services/   # 消息适配器`, where nothing to the right needs to align.
