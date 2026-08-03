@@ -77,7 +77,7 @@ AI Conversation Bridge는 AI 기반 오케스트레이션으로 기업용 메시
 - 메시지를 Flowise로 전달합니다
 - AI 응답을 사용자에게 다시 보냅니다
 
-커넥터에는 **비즈니스 로직이 없습니다** — 순수 어댑터입니다. 새 채팅 플랫폼을 추가하려면 AI 파이프라인을 바꾸지 않고 서비스 파일과 라우트만 추가하면 됩니다. 동일 배포에서 여러 채널 커넥터를 동시에 활성화할 수 있습니다. 예를 들어 LINE WORKS와 DingTalk(딩톡)가 공유 Flowise/OpenRouter 백엔드로 동시에 연결될 수 있습니다.
+커넥터에는 **비즈니스 로직이 없습니다** — 순수 어댑터입니다. 새 채팅 플랫폼을 추가하려면 AI 파이프라인을 바꾸지 않고 서비스 파일과 라우트만 추가하면 됩니다. 동일 배포에서 여러 채널 커넥터를 동시에 활성화할 수 있습니다. 예를 들어 LINE WORKS와 DingTalk(딩톡)이 공유 Flowise/OpenRouter 백엔드로 동시에 연결될 수 있습니다.
 
 외부 메시징 플랫폼에서 Webhook을 수신하므로, 채팅 커넥터는 HTTPS 엔드포인트가 있는 **공개 접근 가능한 환경에 반드시 배포되어야 합니다**. Google Cloud Run이 참고 예시이지만, 공개 URL을 제공하는 어떤 컨테이너 플랫폼이든 가능합니다(AWS App Runner, Azure Container Apps, Alibaba Cloud Elastic Container Instance, Tencent Kubernetes Engine 등).
 

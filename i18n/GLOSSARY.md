@@ -45,14 +45,15 @@ On **first mention** give the English name followed by the local name in full-wi
 | Alibaba Cloud Elastic Container Instance | Alibaba Cloud Elastic Container Instance（阿里云弹性容器实例） | Alibaba Cloud Elastic Container Instance（阿里雲彈性容器執行個體） | Alibaba Cloud Elastic Container Instance *(no parenthetical)* |
 | Tencent Kubernetes Engine | Tencent Kubernetes Engine（腾讯云容器服务） | Tencent Kubernetes Engine（騰訊雲容器服務） | Tencent Kubernetes Engine *(no parenthetical)* |
 | Google Play Store | Google Play Store（谷歌应用商店） | Google Play Store（Google 應用程式商店） | Google Play 스토어 |
-| Golden Week | Golden Week（黄金周） | Golden Week（黃金週） | Golden Week(일본의 골든위크 연휴) |
+| Golden Week | Golden Week（黄金周） | Golden Week（黃金週） | Golden Week(일본의 골든위크) |
 
 `AWS App Runner` and `Azure Container Apps` stay in English with no parenthetical — there is no established local form worth introducing. Korean follows the same rule for Alibaba Cloud Elastic Container Instance and Tencent Kubernetes Engine.
 
 **Korean exceptions to the English-first + gloss pattern:**
 
 - **KakaoTalk** — the Chinese parenthetical is an explanatory gloss for a foreign reader ("Korea's mainstream chat app"). For a Korean reader that gloss is patronizing; use `KakaoTalk(카카오톡)` only.
-- **Golden Week** — this is a Japanese holiday. A Korean reader may not know it, so a gloss helps: `Golden Week(일본의 골든위크 연휴)`.
+- **Golden Week** — this is a Japanese holiday. A Korean reader may not know it, so a gloss helps: `Golden Week(일본의 골든위크)`.
+- **Google Play 스토어** — official Korean product name. Write it as such (same pattern as Japanese `Google Play ストア`), not `Google Play Store(…)`.
 
 Korean uses ASCII `()` for parentheticals, not full-width `（）`. The "full-width parentheses" instruction above applies to the Chinese variants only.
 
@@ -68,7 +69,7 @@ Korean uses ASCII `()` for parentheticals, not full-width `（）`. The "full-wi
 | adapter | 适配器 | 適配器 | — | 어댑터 |
 | webhook adapter | Webhook 适配器 | Webhook 適配器 | — | Webhook 어댑터 |
 | system of action | 执行系统 | 執行系統 | — | 실행 시스템 |
-| source of truth | 权威数据源 | 權威資料來源 | — | 신뢰할 수 있는 데이터 소스 |
+| source of truth | 权威数据源 | 權威資料來源 | — | 권위 있는 데이터 소스 |
 | intent recognition | 意图识别 | 意圖識別 | — | 의도 인식 |
 | jargon | 专有术语 | 專有術語 | — | 전문 용어 |
 | jargon translation | 术语转换 | 術語轉換 | — | 전문 용어 변환 |
@@ -82,7 +83,7 @@ Korean uses ASCII `()` for parentheticals, not full-width `（）`. The "full-wi
 | pipeline | 流水线 | 流程管線 | — | 파이프라인 |
 | runtime | 运行时 | 執行階段 | — | 런타임 |
 | deployment | 部署 | 部署 | — | 배포 |
-| configuration / config *(noun — MCP configuration, Flowise configuration)* | 配置 | 組態 | — | 구성 |
+| configuration / config *(noun — MCP configuration, Flowise configuration)* | 配置 | 組態 | — | 설정 |
 | channel *(chat channel / messaging channel)* | 渠道 | 渠道 | — | 채널 |
 | repository / repo | 仓库 | 儲存庫 | — | 저장소 |
 | credentials | 凭据 | 憑證 | — | 자격 증명 |
@@ -148,7 +149,7 @@ Korean uses ASCII `()` for parentheticals, not full-width `（）`. The "full-wi
 
 Four entries above are not new decisions — they were already set by the placeholder titles in `i18n/zh-Hans/` and `i18n/zh-Hant/`: `演示` (demo), `服务器`/`伺服器` (server), `流程模板`/`流程範本` (flow template), and `设置指南`/`設定指南` (setup guide).
 
-`configuration / config` (組態) is the noun; the verb "configure / set" stays `設定` in zh-Hant (e.g. `設定環境變數`). Do not flatten both into one term.
+`configuration / config` is the noun: zh-Hant `組態`, ko `설정` (e.g. `MCP 설정`, `채널 설정`). Do not use ko `구성` here — that collides with `구성 요소` (components). The verb "configure / set" stays zh-Hant `設定` / ko `설정하다` (e.g. `환경 변수를 설정`).
 
 ### ⚠️ Ambiguous term: context
 
@@ -181,7 +182,7 @@ The full-width punctuation and Latin–Han spacing rules below are **Chinese-onl
 
 ### Korean
 
-- **Register:** 합니다체 (formal polite) throughout — never mix 해요체 or 한다체. Requests are `~하세요` / `~하십시오`. The Chinese `您` rule has no Korean equivalent; Korean handles deference through verb endings, so **avoid 당신** entirely (it reads as confrontational) — drop the second-person pronoun rather than translating it.
+- **Register:** body sentences use 합니다체 (`입니다` / `합니다`). Imperatives and short callout questions use the conventional developer-doc forms `~하세요` and `~시나요?` / `~신가요?` — do **not** convert those to `~하십시오` / `~십니까?`, which mixes registers inside the same callout and reads stiffer than this document's voice. Never use 한다체. The Chinese `您` rule has no Korean equivalent; Korean handles deference through verb endings, so **avoid 당신** entirely (it reads as confrontational) — drop the second-person pronoun rather than translating it.
 - **Punctuation:** ASCII half-width `.` `,` `()` `:` — never full-width `。` `，` `（）` `：`, and never Japanese/Chinese corner quotes `「」` / `『』`. Use ASCII `"…"` for quotations. Separate list items with `,` or `·`, not `、`. Do not "fix" Korean punctuation into full-width to match the Chinese columns.
 - **Spacing (띄어쓰기):** standard Korean rules; a space between Hangul and adjacent Latin tokens is normal (`Flowise 플로우`, `MCP 서버`), not a special typographic rule. Before `(`: no space when the parenthesis glosses or renames the preceding word (`KakaoTalk(카카오톡)`, `개인 정보(주소)`); one space when it is a separate aside (`채팅 커넥터 (chat-connector/)`, `Cloud Run (또는 …)`).
 - **Loanword vs native-Sino:** prefer established loan forms where natural — 서버 not 봉사기; 엔드포인트 not 종점; 오케스트레이션. Use Sino-Korean where it is the settled technical term — 배포, 인증, 감사 로그. Pin each choice in the `ko` column.
@@ -205,6 +206,7 @@ Korean particles are chosen by the **final sound of the preceding word**, and af
 | `Webhook` | 웹훅 | consonant | `Webhook은`, `Webhook이`, `Webhook을` |
 | `Cloud Run` | 클라우드 런 | consonant | `Cloud Run은`, `Cloud Run이` |
 | `JSON` | 제이슨 | consonant | `JSON은`, `JSON이` |
+| `DingTalk` | 딩톡 | consonant | `DingTalk은`, `DingTalk이`, `DingTalk을` |
 
 Never write the `은(는)` / `이(가)` dual form in prose — pick the right one.
 
