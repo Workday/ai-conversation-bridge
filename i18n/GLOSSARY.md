@@ -7,9 +7,9 @@ Shared terminology and conventions for translating this project's documentation.
 - **Read this before you start translating.** Using the agreed term keeps a reader who moves between `README.md` and `docs/architecture.md` from meeting three names for the same component.
 - **Introducing a new term? Add a row.** Same PR as the translation that needed it.
 - **Disagree with an entry?** Change it here *and* in every file that uses it, in one PR. A glossary that drifts from the docs is worse than no glossary.
-- **Filling in a new language?** The `ja` column is `—` because nobody has translated Japanese yet. The `ko` column is filled. Fill your column in the same PR as your first translation.
+- **Filling in a new language?** The `ja` and `ko` columns are filled. Fill your column in the same PR as your first translation.
 
-Coverage today: **zh-Hans**, **zh-Hant**, and **ko** (`README.md`, `docs/architecture.md` translated).
+Coverage today: **zh-Hans**, **zh-Hant**, **ja**, and **ko** (`README.md`, `docs/architecture.md` translated).
 
 ## Never translate
 
@@ -28,24 +28,24 @@ Also verbatim:
 | Session id formats | `lineworks:<userId>`, `dingtalk:<conversationId>:<senderStaffId>` |
 | Shell commands, URLs, JSON payloads | `gcloud run deploy …`, `{ vacation: { available: 12, used: 3 } }` |
 
-**`AI Conversation Bridge`** is a product name and stays in Latin script. The generic phrase "the Bridge", however, *is* translated — zh-Hans 本桥接层, zh-Hant 本橋接層, ko 브릿지 계층.
+**`AI Conversation Bridge`** is a product name and stays in Latin script. The generic phrase "the Bridge", however, *is* translated — zh-Hans 本桥接层, zh-Hant 本橋接層, ja 本ブリッジ, ko 브릿지 계층.
 
 **Flowise UI labels stay in English.** The Flowise interface is English, so a translated menu name sends the reader hunting for something that isn't there. Keep **Agent Flows**, **Add New**, **Settings**, **Load Agentflow** as-is and translate the instruction around them.
 
 ## Product names: English first, local name in parentheses
 
-On **first mention** give the English name followed by the local name in full-width parentheses; use the English name alone after that. This keeps the docs searchable both ways and matches the identifiers readers meet in config and code.
+On **first mention** give the English name followed by the local name in full-width parentheses; use the English name alone after that. This keeps the docs searchable both ways and matches the identifiers readers meet in config and code. Japanese has documented exceptions below (native kana forms such as ゴールデンウィーク and official names such as `Google Play ストア`) — follow the `ja first mention` column and the notes under the table rather than forcing the Chinese pattern.
 
-| English | zh-Hans first mention | zh-Hant first mention | ko first mention |
-|---|---|---|---|
-| DingTalk | DingTalk（钉钉） | DingTalk（釘釘） | DingTalk(딩톡) |
-| WeChat | WeChat（微信） | WeChat（微信） | WeChat(위챗) |
-| Feishu | Feishu（飞书） | Feishu（飛書） | Feishu(페이슈) |
-| KakaoTalk | KakaoTalk（韩国主流聊天应用） | KakaoTalk（韓國主流聊天應用） | KakaoTalk(카카오톡) |
-| Alibaba Cloud Elastic Container Instance | Alibaba Cloud Elastic Container Instance（阿里云弹性容器实例） | Alibaba Cloud Elastic Container Instance（阿里雲彈性容器執行個體） | Alibaba Cloud Elastic Container Instance *(no parenthetical)* |
-| Tencent Kubernetes Engine | Tencent Kubernetes Engine（腾讯云容器服务） | Tencent Kubernetes Engine（騰訊雲容器服務） | Tencent Kubernetes Engine *(no parenthetical)* |
-| Google Play Store | Google Play Store（谷歌应用商店） | Google Play Store（Google 應用程式商店） | Google Play 스토어 |
-| Golden Week | Golden Week（黄金周） | Golden Week（黃金週） | Golden Week(일본의 골든위크) |
+| English | zh-Hans first mention | zh-Hant first mention | ja first mention | ko first mention |
+|---|---|---|---|---|
+| DingTalk | DingTalk（钉钉） | DingTalk（釘釘） | DingTalk（ディントーク） | DingTalk(딩톡) |
+| WeChat | WeChat（微信） | WeChat（微信） | WeChat（ウィーチャット） | WeChat(위챗) |
+| Feishu | Feishu（飞书） | Feishu（飛書） | Feishu（フィーシュー） | Feishu(페이슈) |
+| KakaoTalk | KakaoTalk（韩国主流聊天应用） | KakaoTalk（韓國主流聊天應用） | KakaoTalk（カカオトーク） | KakaoTalk(카카오톡) |
+| Alibaba Cloud Elastic Container Instance | Alibaba Cloud Elastic Container Instance（阿里云弹性容器实例） | Alibaba Cloud Elastic Container Instance（阿里雲彈性容器執行個體） | Alibaba Cloud Elastic Container Instance | Alibaba Cloud Elastic Container Instance *(no parenthetical)* |
+| Tencent Kubernetes Engine | Tencent Kubernetes Engine（腾讯云容器服务） | Tencent Kubernetes Engine（騰訊雲容器服務） | Tencent Kubernetes Engine | Tencent Kubernetes Engine *(no parenthetical)* |
+| Google Play Store | Google Play Store（谷歌应用商店） | Google Play Store（Google 應用程式商店） | Google Play ストア | Google Play 스토어 |
+| Golden Week | Golden Week（黄金周） | Golden Week（黃金週） | ゴールデンウィーク | Golden Week(일본의 골든위크) |
 
 `AWS App Runner` and `Azure Container Apps` stay in English with no parenthetical — there is no established local form worth introducing. Korean follows the same rule for Alibaba Cloud Elastic Container Instance and Tencent Kubernetes Engine.
 
@@ -55,97 +55,106 @@ On **first mention** give the English name followed by the local name in full-wi
 - **Golden Week** — this is a Japanese holiday. A Korean reader may not know it, so a gloss helps: `Golden Week(일본의 골든위크)`.
 - **Google Play 스토어** — official Korean product name. Write it as such (same pattern as Japanese `Google Play ストア`), not `Google Play Store(…)`.
 
+**Japanese exceptions / notes:**
+
+- **Golden Week** is a Japanese holiday. ゴールデンウィーク is the native term, not a gloss of an English one. Write it in kana as a Japanese reader would; do **not** produce `Golden Week（ゴールデンウィーク）`.
+- **LINE** / **LINE WORKS** are native to the Japanese market and already Latin-script. No parenthetical.
+- **KakaoTalk** has an established kana form (カカオトーク), so `KakaoTalk（カカオトーク）` is appropriate; an explanatory gloss is unnecessary.
+- **DingTalk / WeChat / Feishu** use established kana forms rather than Chinese characters — friendlier to a Japanese technical reader.
+- **Google Play ストア** is the official Japanese name; write it as such rather than `Google Play Store（…）`.
+- **Alibaba Cloud Elastic Container Instance** and **Tencent Kubernetes Engine** stay in English with no parenthetical — same precedent as `AWS App Runner` / `Azure Container Apps`.
+
 Korean uses ASCII `()` for parentheticals, not full-width `（）`. The "full-width parentheses" instruction above applies to the Chinese variants only.
 
 ## Terms
 
 | English | zh-Hans | zh-Hant | ja | ko |
 |---|---|---|---|---|
-| APJ region | 亚太及日本（APJ）地区 | 亞太及日本（APJ）地區 | — | APJ(아시아 태평양 및 일본) 지역 |
-| architecture | 架构 | 架構 | — | 아키텍처 |
-| reference architecture | 参考架构 | 參考架構 | — | 참조 아키텍처 |
-| orchestration | 编排 | 編排 | — | 오케스트레이션 |
-| chat connector | 聊天连接器 | 聊天連接器 | — | 채팅 커넥터 |
-| adapter | 适配器 | 適配器 | — | 어댑터 |
-| webhook adapter | Webhook 适配器 | Webhook 適配器 | — | Webhook 어댑터 |
-| system of action | 执行系统 | 執行系統 | — | 실행 시스템 |
-| source of truth | 权威数据源 | 權威資料來源 | — | 권위 있는 데이터 소스 |
-| intent recognition | 意图识别 | 意圖識別 | — | 의도 인식 |
-| jargon | 专有术语 | 專有術語 | — | 전문 용어 |
-| jargon translation | 术语转换 | 術語轉換 | — | 전문 용어 변환 |
-| session id | 会话 ID | 工作階段 ID | — | 세션 ID |
-| platform-scoped session id | 按平台隔离的会话 ID | 依平台隔離的工作階段 ID | — | 플랫폼별 세션 ID |
-| conversation memory | 对话记忆 | 對話記憶 | — | 대화 메모리 |
-| tool calling | 工具调用 | 工具呼叫 | — | 도구 호출 |
-| tool execution | 工具执行 | 工具執行 | — | 도구 실행 |
-| prediction API | 预测 API | 預測 API | — | 예측 API |
-| endpoint | 端点 | 端點 | — | 엔드포인트 |
-| pipeline | 流水线 | 流程管線 | — | 파이프라인 |
-| runtime | 运行时 | 執行階段 | — | 런타임 |
-| deployment | 部署 | 部署 | — | 배포 |
+| APJ region | 亚太及日本（APJ）地区 | 亞太及日本（APJ）地區 | アジア太平洋および日本（APJ）地域 | APJ(아시아 태평양 및 일본) 지역 |
+| architecture | 架构 | 架構 | アーキテクチャ | 아키텍처 |
+| reference architecture | 参考架构 | 參考架構 | リファレンスアーキテクチャ | 참조 아키텍처 |
+| orchestration | 编排 | 編排 | オーケストレーション | 오케스트레이션 |
+| chat connector | 聊天连接器 | 聊天連接器 | チャットコネクター | 채팅 커넥터 |
+| adapter | 适配器 | 適配器 | アダプター | 어댑터 |
+| webhook adapter | Webhook 适配器 | Webhook 適配器 | Webhookアダプター | Webhook 어댑터 |
+| system of action | 执行系统 | 執行系統 | 実行システム | 실행 시스템 |
+| source of truth | 权威数据源 | 權威資料來源 | 信頼できる情報源 | 권위 있는 데이터 소스 |
+| intent recognition | 意图识别 | 意圖識別 | 意図認識 | 의도 인식 |
+| jargon | 专有术语 | 專有術語 | 専門用語 | 전문 용어 |
+| jargon translation | 术语转换 | 術語轉換 | 専門用語の変換 | 전문 용어 변환 |
+| session id | 会话 ID | 工作階段 ID | セッションID | 세션 ID |
+| platform-scoped session id | 按平台隔离的会话 ID | 依平台隔離的工作階段 ID | プラットフォーム単位のセッションID | 플랫폼별 세션 ID |
+| conversation memory | 对话记忆 | 對話記憶 | 会話メモリ | 대화 메모리 |
+| tool calling | 工具调用 | 工具呼叫 | ツール呼び出し | 도구 호출 |
+| tool execution | 工具执行 | 工具執行 | ツール実行 | 도구 실행 |
+| prediction API | 预测 API | 預測 API | 予測 API | 예측 API |
+| endpoint | 端点 | 端點 | エンドポイント | 엔드포인트 |
+| pipeline | 流水线 | 流程管線 | パイプライン | 파이프라인 |
+| runtime | 运行时 | 執行階段 | ランタイム | 런타임 |
+| deployment | 部署 | 部署 | デプロイ | 배포 |
 | configuration / config *(noun — MCP configuration, Flowise configuration)* | 配置 | 組態 | — | 설정 |
 | channel *(chat channel / messaging channel)* | 渠道 | 渠道 | — | 채널 |
-| repository / repo | 仓库 | 儲存庫 | — | 저장소 |
-| credentials | 凭据 | 憑證 | — | 자격 증명 |
-| bot / robot | 机器人 | 機器人 | — | 봇 / 로봇 |
-| callback URL | 回调 URL | 回呼 URL | — | 콜백 URL |
-| fallback | 回退 | 後備 | — | 폴백 |
-| profile | 档案信息 | 個人檔案 | — | 프로필 |
-| stateless | 无状态 | 無狀態 | — | 무상태 |
-| public-facing | 面向公网的 | 對外公開的 | — | 공개 접근 가능한 |
-| container platform | 容器平台 | 容器平台 | — | 컨테이너 플랫폼 |
-| self-hosted | 自托管 | 自行託管 | — | 자체 호스팅 |
-| customer-managed | 客户自行管理 | 客戶自行管理 | — | 고객 관리 |
-| data sovereignty | 数据主权 | 資料主權 | — | 데이터 주권 |
-| regulatory hurdles | 监管障碍 | 法規障礙 | — | 규제 장애 |
-| regulatory restrictions | 监管限制 | 法規限制 | — | 규제 제한 |
-| local models | 本地模型 | 本地模型 | — | 로컬 모델 |
-| separation of concerns | 关注点分离 | 關注點分離 | — | 관심사 분리 |
-| platform agnostic | 平台无关 | 平台無關 | — | 플랫폼 독립성 |
-| production hardening | 生产环境强化 | 生產環境強化 | — | 프로덕션 보안 강화 |
-| signature verification | 签名验证 | 簽章驗證 | — | 서명 검증 |
-| audit logging | 审计日志 | 稽核日誌 | — | 감사 로그 |
-| authentication | 身份验证 | 身分驗證 | — | 인증 |
-| rate limiting | 限流 | 速率限制 | — | 속도 제한 |
-| retry logic | 重试逻辑 | 重試邏輯 | — | 재시도 로직 |
-| identity mapping | 身份映射 | 身分對應 | — | 신원 매핑 |
-| observability | 可观测性 | 可觀測性 | — | 관찰 가능성 |
-| input limits | 输入长度限制 | 輸入長度限制 | — | 입력 길이 제한 |
-| response validation | 响应校验 | 回應驗證 | — | 응답 검증 |
-| network policies | 网络策略 | 網路原則 | — | 네트워크 정책 |
-| mock data | 模拟数据 | 模擬資料 | — | 모의 데이터 |
-| mock tools | 模拟工具 | 模擬工具 | — | 모의 도구 |
-| demo | 演示 | 演示 | — | 데모 |
-| official / standard *(vendor-published — "the official MCP endpoint", "the standard Workday Android app")* | 官方 | 官方 | — | 공식 / 표준 |
-| server | 服务器 | 伺服器 | — | 서버 |
-| flow | 流程 | 流程 | — | 플로우 |
-| flow template | 流程模板 | 流程範本 | — | 플로우 템플릿 |
-| super-app dominance | 超级应用主导 | 超級應用的主導地位 | — | 슈퍼 앱 중심 환경 |
-| worker *(Workday sense)* | 工作者 | 工作者 | — | 워커 |
-| employee | 员工 | 員工 | — | 직원 |
-| worker ID | 工作者 ID | 工作者 ID | — | 워커 ID |
-| time off | 休假 | 休假 | — | 휴가 |
-| leave balance | 假期余额 | 假期餘額 | — | 휴가 잔여일수 |
-| leave request | 休假申请 | 休假申請 | — | 휴가 신청 |
-| direct reports | 直接下属 | 直接下屬 | — | 직속 부하 직원 |
-| emergency contact | 紧急联系人 | 緊急聯絡人 | — | 비상 연락처 |
-| eligibility | 申请资格 | 申請資格 | — | 신청 자격 |
-| message routing | 消息路由 | 訊息路由 | — | 메시지 라우팅 |
-| response delivery | 响应投递 | 回應傳遞 | — | 응답 전달 |
-| AI provider | AI 提供方 | AI 供應商 | — | AI 제공자 |
-| AI backend | AI 后端 | AI 後端 | — | AI 백엔드 |
-| environment variable | 环境变量 | 環境變數 | — | 환경 변수 |
-| default | 默认 | 預設 | — | 기본값 |
-| network | 网络 | 網路 | — | 네트워크 |
-| project | 项目 | 專案 | — | 프로젝트 |
-| context *(business/cultural sense — not an LLM's context window)* | 语境 | 語境 | — | 맥락 |
-| documentation | 文档 | 文件 | — | 문서 |
-| file | 文件 | 檔案 | — | 파일 |
-| license | 许可证 | 授權條款 | — | 라이선스 |
-| quick start | 快速开始 | 快速開始 | — | 빠른 시작 |
-| prerequisites | 前置条件 | 前置條件 | — | 필요한 것 |
-| setup guide | 设置指南 | 設定指南 | — | 설정 가이드 |
-| enterprise hardening guide | 企业强化指南 | 企業強化指南 | — | 엔터프라이즈 보안 강화 가이드 |
+| repository / repo | 仓库 | 儲存庫 | リポジトリ | 저장소 |
+| credentials | 凭据 | 憑證 | 認証情報 | 자격 증명 |
+| bot / robot | 机器人 | 機器人 | ボット / ロボット | 봇 / 로봇 |
+| callback URL | 回调 URL | 回呼 URL | コールバック URL | 콜백 URL |
+| fallback | 回退 | 後備 | フォールバック | 폴백 |
+| profile | 档案信息 | 個人檔案 | プロフィール | 프로필 |
+| stateless | 无状态 | 無狀態 | ステートレス | 무상태 |
+| public-facing | 面向公网的 | 對外公開的 | パブリック向け | 공개 접근 가능한 |
+| container platform | 容器平台 | 容器平台 | コンテナプラットフォーム | 컨테이너 플랫폼 |
+| self-hosted | 自托管 | 自行託管 | セルフホスト | 자체 호스팅 |
+| customer-managed | 客户自行管理 | 客戶自行管理 | 顧客管理 | 고객 관리 |
+| data sovereignty | 数据主权 | 資料主權 | データ主権 | 데이터 주권 |
+| regulatory hurdles | 监管障碍 | 法規障礙 | 規制上のハードル | 규제 장애 |
+| regulatory restrictions | 监管限制 | 法規限制 | 規制上の制限 | 규제 제한 |
+| local models | 本地模型 | 本地模型 | ローカルモデル | 로컬 모델 |
+| separation of concerns | 关注点分离 | 關注點分離 | 関心の分離 | 관심사 분리 |
+| platform agnostic | 平台无关 | 平台無關 | プラットフォーム非依存 | 플랫폼 독립성 |
+| production hardening | 生产环境强化 | 生產環境強化 | 本番環境の堅牢化 | 프로덕션 보안 강화 |
+| signature verification | 签名验证 | 簽章驗證 | 署名検証 | 서명 검증 |
+| audit logging | 审计日志 | 稽核日誌 | 監査ログ | 감사 로그 |
+| authentication | 身份验证 | 身分驗證 | 認証 | 인증 |
+| rate limiting | 限流 | 速率限制 | レート制限 | 속도 제한 |
+| retry logic | 重试逻辑 | 重試邏輯 | リトライロジック | 재시도 로직 |
+| identity mapping | 身份映射 | 身分對應 | アイデンティティマッピング | 신원 매핑 |
+| observability | 可观测性 | 可觀測性 | オブザーバビリティ | 관찰 가능성 |
+| input limits | 输入长度限制 | 輸入長度限制 | 入力制限 | 입력 길이 제한 |
+| response validation | 响应校验 | 回應驗證 | レスポンス検証 | 응답 검증 |
+| network policies | 网络策略 | 網路原則 | ネットワークポリシー | 네트워크 정책 |
+| mock data | 模拟数据 | 模擬資料 | モックデータ | 모의 데이터 |
+| mock tools | 模拟工具 | 模擬工具 | モックツール | 모의 도구 |
+| demo | 演示 | 演示 | デモ | 데모 |
+| official / standard *(vendor-published — "the official MCP endpoint", "the standard Workday Android app")* | 官方 | 官方 | 公式 | 공식 / 표준 |
+| server | 服务器 | 伺服器 | サーバー | 서버 |
+| flow | 流程 | 流程 | フロー | 플로우 |
+| flow template | 流程模板 | 流程範本 | フローテンプレート | 플로우 템플릿 |
+| super-app dominance | 超级应用主导 | 超級應用的主導地位 | スーパーアプリの優位 | 슈퍼 앱 중심 환경 |
+| worker *(Workday sense)* | 工作者 | 工作者 | ワーカー | 워커 |
+| employee | 员工 | 員工 | 従業員 | 직원 |
+| worker ID | 工作者 ID | 工作者 ID | ワーカーID | 워커 ID |
+| time off | 休假 | 休假 | 休暇 | 휴가 |
+| leave balance | 假期余额 | 假期餘額 | 休暇残日数 | 휴가 잔여일수 |
+| leave request | 休假申请 | 休假申請 | 休暇申請 | 휴가 신청 |
+| direct reports | 直接下属 | 直接下屬 | 直属の部下 | 직속 부하 직원 |
+| emergency contact | 紧急联系人 | 緊急聯絡人 | 緊急連絡先 | 비상 연락처 |
+| eligibility | 申请资格 | 申請資格 | 申請資格 | 신청 자격 |
+| message routing | 消息路由 | 訊息路由 | メッセージルーティング | 메시지 라우팅 |
+| response delivery | 响应投递 | 回應傳遞 | レスポンス配信 | 응답 전달 |
+| AI provider | AI 提供方 | AI 供應商 | AIプロバイダー | AI 제공자 |
+| AI backend | AI 后端 | AI 後端 | AIバックエンド | AI 백엔드 |
+| environment variable | 环境变量 | 環境變數 | 環境変数 | 환경 변수 |
+| default | 默认 | 預設 | デフォルト | 기본값 |
+| network | 网络 | 網路 | ネットワーク | 네트워크 |
+| project | 项目 | 專案 | プロジェクト | 프로젝트 |
+| context *(business/cultural sense — not an LLM's context window)* | 语境 | 語境 | 文脈 | 맥락 |
+| documentation | 文档 | 文件 | ドキュメント | 문서 |
+| file | 文件 | 檔案 | ファイル | 파일 |
+| license | 许可证 | 授權條款 | ライセンス | 라이선스 |
+| quick start | 快速开始 | 快速開始 | クイックスタート | 빠른 시작 |
+| prerequisites | 前置条件 | 前置條件 | 前提条件 | 필요한 것 |
+| setup guide | 设置指南 | 設定指南 | セットアップガイド | 설정 가이드 |
+| enterprise hardening guide | 企业强化指南 | 企業強化指南 | エンタープライズ堅牢化ガイド | 엔터프라이즈 보안 강화 가이드 |
 
 Four entries above are not new decisions — they were already set by the placeholder titles in `i18n/zh-Hans/` and `i18n/zh-Hant/`: `演示` (demo), `服务器`/`伺服器` (server), `流程模板`/`流程範本` (flow template), and `设置指南`/`設定指南` (setup guide).
 
@@ -156,6 +165,8 @@ Four entries above are not new decisions — they were already set by the placeh
 The English source uses "context" in the everyday sense — company jargon, local cultural nuances (`README.md`: "Language and context", `docs/architecture.md`: "Language/context gaps"). A literal `上下文`/`上下文` reads to a technical audience as an LLM's *context window*, which is not what's meant. Use `语境`/`語境` (linguistic/cultural context) instead. If a future passage really does mean the AI context window, `上下文` is correct there — check which sense applies before translating.
 
 For Korean, the same trap exists: `컨텍스트` reads as the model's context window. Use `맥락` (or `문화적 배경`) for the business/cultural sense.
+
+**Japanese:** the same trap applies with `コンテキスト`, which a technical Japanese audience reads as the model's context window. Use `文脈` for the business/cultural sense (or `商習慣・文化的背景` when the passage is more about local practice than language). Reserve `コンテキスト` for an actual LLM context window.
 
 ### ⚠️ False friend: 文件
 
@@ -209,6 +220,16 @@ Korean particles are chosen by the **final sound of the preceding word**, and af
 | `DingTalk` | 딩톡 | consonant | `DingTalk은`, `DingTalk이`, `DingTalk을` |
 
 Never write the `은(는)` / `이(가)` dual form in prose — pick the right one.
+
+### Japanese
+
+- **Register:** です・ます調 throughout — never mix in である調. Warm asides (brain/ears/hands, "Fun fact") stay warm but stay polite; prefer a 実は… register over a stiff literal 面白い事実.
+- **Punctuation:** full-width `。` and `、` in Japanese sentences; full-width `（）` in prose. Never ASCII `.` or `,` ending a Japanese sentence.
+- **Latin/Japanese spacing:** **no space** between Latin letters and Japanese (kana/kanji): `Flowiseフロー`, `MCPサーバー`, `AIプロバイダー`, `セッションID`, `ワーカーID`. This matches standard Japanese technical writing and the existing placeholder text (`[英語版（原文）を読む →]`). Apply uniformly — mixed spacing is the most visible consistency failure in a Japanese translation. (`Google Play ストア` keeps its internal space — that is the official product name, not this rule.)
+- **Long-vowel marks (ー):** prefer the long form for katakana loanwords, matching modern Microsoft/JTF convention: サーバー, コンピューター, ユーザー, アダプター, コネクター, プロバイダー. Do not mix サーバ / サーバー.
+- **Katakana vs kanji vs English:** サーバー / エンドポイント / オーケストレーション / アダプター stay in katakana; アーキテクチャ for architecture; 意図認識, 権限, 監査ログ in kanji where natural. Pin specifics in the `ja` column above.
+- Preserve the source's `**bold**`, especially on load-bearing warnings.
+- Code fences are verbatim (commands, env vars, JSON, comments) — except sample *conversation* text, which is prose and should be translated.
 
 ## Structure
 
@@ -285,7 +306,7 @@ for path in sys.argv[1:]:
                 bad.append((n, line))
     print(path + ': ' + ('OK' if not bad else str(len(bad)) + ' line(s) with CJK inside box art'))
     for n, line in bad: print('  ' + str(n) + ': ' + line)
-" i18n/zh-Hans/docs/architecture.md i18n/zh-Hans/README.md i18n/zh-Hant/docs/architecture.md i18n/zh-Hant/README.md i18n/ko/docs/architecture.md i18n/ko/README.md
+" i18n/zh-Hans/docs/architecture.md i18n/zh-Hans/README.md i18n/zh-Hant/docs/architecture.md i18n/zh-Hant/README.md i18n/ja/docs/architecture.md i18n/ja/README.md i18n/ko/docs/architecture.md i18n/ko/README.md
 ```
 
 It deliberately ignores markdown tables, which sit outside code fences, and trailing CJK comments in tree diagrams like `+-- app/services/   # 消息适配器`, where nothing to the right needs to align.
