@@ -87,17 +87,17 @@ Korean uses ASCII `()` for parentheticals, not full-width `（）`. The "full-wi
 | conversation memory | 对话记忆 | 對話記憶 | 会話メモリ | 대화 메모리 |
 | tool calling | 工具调用 | 工具呼叫 | ツール呼び出し | 도구 호출 |
 | tool execution | 工具执行 | 工具執行 | ツール実行 | 도구 실행 |
-| prediction API | 预测 API | 預測 API | 予測 API | 예측 API |
+| prediction API | 预测 API | 預測 API | 予測API | 예측 API |
 | endpoint | 端点 | 端點 | エンドポイント | 엔드포인트 |
 | pipeline | 流水线 | 流程管線 | パイプライン | 파이프라인 |
 | runtime | 运行时 | 執行階段 | ランタイム | 런타임 |
 | deployment | 部署 | 部署 | デプロイ | 배포 |
-| configuration / config *(noun — MCP configuration, Flowise configuration)* | 配置 | 組態 | — | 설정 |
-| channel *(chat channel / messaging channel)* | 渠道 | 渠道 | — | 채널 |
+| configuration / config *(noun — MCP configuration, Flowise configuration)* | 配置 | 組態 | 設定 | 설정 |
+| channel *(chat channel / messaging channel)* | 渠道 | 渠道 | チャネル | 채널 |
 | repository / repo | 仓库 | 儲存庫 | リポジトリ | 저장소 |
 | credentials | 凭据 | 憑證 | 認証情報 | 자격 증명 |
 | bot / robot | 机器人 | 機器人 | ボット / ロボット | 봇 / 로봇 |
-| callback URL | 回调 URL | 回呼 URL | コールバック URL | 콜백 URL |
+| callback URL | 回调 URL | 回呼 URL | コールバックURL | 콜백 URL |
 | fallback | 回退 | 後備 | フォールバック | 폴백 |
 | profile | 档案信息 | 個人檔案 | プロフィール | 프로필 |
 | stateless | 无状态 | 無狀態 | ステートレス | 무상태 |

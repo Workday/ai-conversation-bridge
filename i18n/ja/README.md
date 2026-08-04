@@ -135,7 +135,7 @@ gcloud run deploy chat-connector \
 | `get_more_employee_data` | 詳細な従業員データを取得する |
 | `get_my_time_off_eligibility` | 現在のユーザーが申請できる休暇種別を確認する |
 | `get_personal_information` | 個人情報（住所、緊急連絡先）を取得する |
-| `get_today_date_and_day_of_week` | 現在の日付と時刻を取得する |
+| `get_today_date_and_day_of_week` | 現在の日付と曜日を取得する |
 | `request_my_time_off` | 現在のユーザーの休暇申請を提出する |
 
 
