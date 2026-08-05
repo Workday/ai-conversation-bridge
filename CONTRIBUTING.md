@@ -23,6 +23,7 @@ Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
 | New chat platform adapters (e.g., WeChat, KakaoTalk) | Open a PR |
 | New demo MCP tools (with mock data) | Open a PR |
 | New Flowise flow templates | Open a PR |
+| Translations (see [i18n/GLOSSARY.md](i18n/GLOSSARY.md)) | Open a PR |
 | Architectural or framework changes | Open an issue first to discuss |
 
 ## License
@@ -52,6 +53,19 @@ Follow existing patterns in each component. The key conventions:
 - **Flowise flows** (`flowise/flows/`) — Export flows as JSON from Flowise. Include screenshots in `flowise/screenshots/` and document the flow's purpose and required configuration in `flowise/README.md`. Ensure new flows work with the demo MCP server.
 
 - **MCP server** (`mcp-demo-server/`) — New tools go in `main.py` with type hints and docstrings. Add corresponding mock data as JSON in `mock_data/`.
+
+## Translations
+
+Translations live in `i18n/<lang>/`, mirroring the repo structure — `i18n/zh-Hans/README.md` translates `README.md`, `i18n/ja/docs/architecture.md` translates `docs/architecture.md`, and so on. Currently `zh-Hans`, `zh-Hant`, `ja`, and `ko`.
+
+Before you start, read **[i18n/GLOSSARY.md](i18n/GLOSSARY.md)**. It records the agreed term for each concept, which product names stay in English, and the style and structural conventions to follow. If you introduce a term that isn't there yet, add a row in the same PR. If you're the first to translate a language, fill in your column.
+
+A few things that are easy to get wrong:
+
+- **Leave the H1 and language-switcher block alone** when replacing a placeholder — the relative link depths are already correct.
+- **Relative links need care.** A doc that has a translation stays relative so it resolves inside `i18n/<lang>/`; links to code, assets, or untranslated files need `../../` to escape the language directory.
+- **Nothing in CI checks links.** Verify them by hand from the translated file's own directory before opening a PR.
+- **ASCII diagrams break silently.** CJK characters are double-width, so translating a label inside a box misaligns the border unless you re-pad it. The glossary has a one-liner to check.
 
 ## Pull Request Process
 
