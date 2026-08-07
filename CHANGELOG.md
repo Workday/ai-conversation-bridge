@@ -20,4 +20,4 @@ First tagged snapshot of the AI Conversation Bridge reference architecture.
 - Documentation and scripts for Cloud Run–style public deployment
 - Localized README and architecture docs (zh-Hans, zh-Hant, ja, ko)
 
-[0.1.0]: https://github.com/samxli/ai-conversation-bridge/releases/tag/v0.1.0
+[0.1.0]: https://github.com/workday/ai-conversation-bridge/releases/tag/v0.1.0
