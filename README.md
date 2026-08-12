@@ -169,6 +169,7 @@ ai-conversation-bridge/
 - [Enterprise Hardening Guide](docs/enterprise-guide.md) — Security, reliability, and operational recommendations for production
 - [Flowise Configuration](flowise/README.md) — How to import and configure the flow templates
 - [Contributing](CONTRIBUTING.md) — How to contribute to this project
+- [Changelog](CHANGELOG.md) — Tagged releases (`v0.x`; reference architecture, no stability promise)
 
 ## License
 
