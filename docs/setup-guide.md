@@ -142,6 +142,14 @@ By default, DingTalk direct messages receive a response from allowed users. Grou
 
 The connector authorizes DingTalk users with `senderStaffId`, which corresponds to the employee UserID available in the DingTalk admin console. It intentionally ignores callbacks that only include encrypted `senderId` values, because those are not practical for admins to retrieve or manage. If logs show `Ignoring DingTalk message without senderStaffId`, confirm the DingTalk app version and robot capability are both published, and that the published robot is installed in an internal group for the same organization.
 
+### Feishu (Lark) Bot Setup
+
+1. Go to the [Feishu Open Platform](https://open.feishu.cn/app) and create an enterprise app.
+2. Enable **Event Subscription** and subscribe to `im.message.receive_v1`.
+3. Set the request URL to your deployed chat connector's public URL + `/feishu/callback` (e.g., `https://chat-connector-abc123.us-west1.run.app/feishu/callback`).
+4. Copy the **Verification Token** into `FEISHU_VERIFICATION_TOKEN`, and set `FEISHU_APP_ID` / `FEISHU_APP_SECRET` from the app credentials page.
+5. Leave **Encrypt Key** disabled unless you add payload decryption support — encrypted callbacks return HTTP 400 with a clear error.
+
 ### Quick Test with OpenRouter
 
 If you want to test the chat connector without Flowise:

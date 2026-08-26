@@ -105,6 +105,7 @@ Set your chat platform callback URLs to the channel-specific endpoints:
 
 - LINE WORKS: `https://chat-connector-abc123.us-west1.run.app/lineworks/callback`
 - DingTalk HTTP robot: `https://chat-connector-abc123.us-west1.run.app/dingtalk/callback`
+- Feishu (Lark): `https://chat-connector-abc123.us-west1.run.app/feishu/callback`
 
 The legacy `/callback` path is still accepted as a LINE WORKS alias for existing deployments.
 

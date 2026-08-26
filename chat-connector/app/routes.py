@@ -7,6 +7,7 @@ from flask import Blueprint, current_app, jsonify, request
 from app.config import Config
 from app.response_validator import ResponseValidator
 from app.services.dingtalk import DingTalkClient
+from app.services.feishu import FeishuClient, process_im_text_message
 from app.services.flowise import FlowiseClient
 from app.services.lineworks import LineWorksClient
 from app.services.openrouter import OpenRouterClient
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 lw_client = LineWorksClient(Config)
 dingtalk_client = DingTalkClient(Config)
+feishu_client = FeishuClient(Config.FEISHU_APP_ID, Config.FEISHU_APP_SECRET)
 
 if Config.AI_PROVIDER == 'openrouter':
     logger.info("Using OpenRouter as chat provider (demo/experiment)")
@@ -41,7 +43,7 @@ def health():
     return jsonify({
         "status": "ok",
         "ai_provider": Config.AI_PROVIDER,
-        "chat_clients": ["lineworks", "dingtalk"],
+        "chat_clients": ["lineworks", "dingtalk", "feishu"],
     }), 200
 
 
@@ -167,3 +169,53 @@ def dingtalk_callback():
     except Exception as e:
         current_app.logger.error(f"Error processing DingTalk callback: {e}")
         return 'Internal Server Error', 500
+
+
+@bp.route('/feishu/callback', methods=['POST'])
+def feishu_callback():
+    """Handle Feishu (Lark) event subscription callbacks."""
+    body = request.get_json(silent=True) or {}
+    logger.info("Feishu callback received")
+
+    if body.get("encrypt"):
+        logger.error(
+            "Feishu Encrypt Key is enabled but payload decryption is not implemented; "
+            "disable Encrypt Key in the Feishu developer console or add decryption support."
+        )
+        return jsonify({
+            "error": (
+                "Encrypted payloads are not supported. "
+                "Disable Encrypt Key in your Feishu app event subscription settings."
+            )
+        }), 400
+
+    if body.get("type") == "url_verification":
+        if Config.FEISHU_VERIFICATION_TOKEN and body.get("token") == Config.FEISHU_VERIFICATION_TOKEN:
+            return jsonify({"challenge": body.get("challenge")})
+        logger.error("Feishu URL verification token mismatch")
+        return jsonify({"error": "Forbidden"}), 403
+
+    header = body.get("header") or {}
+    if not Config.FEISHU_VERIFICATION_TOKEN:
+        logger.error("FEISHU_VERIFICATION_TOKEN is not configured; rejecting Feishu event")
+        return jsonify({"error": "Forbidden"}), 403
+    if header.get("token") != Config.FEISHU_VERIFICATION_TOKEN:
+        logger.error("Feishu event verification token mismatch")
+        return jsonify({"error": "Forbidden"}), 403
+
+    event_type = header.get("event_type")
+
+    if event_type == "im.message.receive_v1":
+        try:
+            process_im_text_message(
+                event=body.get("event") or {},
+                feishu=feishu_client,
+                get_ai_response=get_ai_response,
+            )
+        except Exception as e:
+            logger.exception("Error processing Feishu callback: %s", e)
+            return 'Internal Server Error', 500
+        return jsonify({"code": 0, "msg": "ok"}), 200
+
+    logger.info("Ignoring Feishu event_type=%s", event_type)
+    return jsonify({"code": 0, "msg": "ok"}), 200
