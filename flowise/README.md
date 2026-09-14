@@ -50,17 +50,19 @@ An Agent Flow that acts as a **Workday Intelligent Assistant** — it receives n
 **Tools:**
 
 1. **RSS News** (`get_rss_news`) — HTTP GET tool for fetching RSS feeds (demo/testing)
-2. **Workday MCP** — Custom MCP client with 11 Workday tools:
+2. **Workday MCP** — Custom MCP client with 13 Workday tools:
 
 | MCP Tool | Description |
 |----------|-------------|
 | `find_employee_id_by_name` | Look up an employee's worker ID by name |
 | `get_current_user_info` | Get the current user's profile |
+| `get_current_user_payslips` | Get current user's payslip or history by period |
 | `get_current_user_time_off_balance` | Get the current user's leave balances |
 | `get_current_user_time_off_history` | Get the current user's leave request history |
 | `get_direct_reports` | List direct reports for a manager |
 | `get_more_employee_data` | Get extended employee data |
 | `get_my_time_off_eligibility` | Check which leave types the current user can request |
+| `get_payslip_by_worker_id` | Get payslip for any worker by ID and period |
 | `get_personal_information` | Get personal info (address, emergency contact) |
 | `get_today_date_and_day_of_week` | Get the current date and time |
 | `request_my_time_off` | Submit a time-off request |

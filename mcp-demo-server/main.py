@@ -219,6 +219,51 @@ def request_my_time_off(start_date: str, end_date: str, time_off_type: str, reas
     }
 
 
+@mcp.tool()
+def get_current_user_payslips(period: str = "") -> dict:
+    """Get the current user's payslips.
+
+    Args:
+        period: Optional pay period in YYYY-MM format (e.g. '2026-02').
+               If omitted, returns all available payslips for the current user.
+    """
+    slips = _load_mock_data("pay_slips.json")
+    user_slips = [s for s in slips if s.get("worker_id") == CURRENT_USER_WORKER_ID]
+    if not user_slips:
+        return {"error": "No payslips found for current user"}
+
+    if period:
+        match = next((s for s in user_slips if s.get("period") == period), None)
+        if match:
+            return match
+        return {"error": f"No payslip found for current user for period '{period}'"}
+
+    return {"worker_id": CURRENT_USER_WORKER_ID, "payslips": user_slips}
+
+
+@mcp.tool()
+def get_payslip_by_worker_id(worker_id: str, period: str = "") -> dict:
+    """Get payslip information for a specific worker by worker ID.
+
+    Args:
+        worker_id: The worker's ID (e.g. WK001, WK002)
+        period: Optional pay period in YYYY-MM format (e.g. '2026-02').
+               If omitted, returns all available payslips for the worker.
+    """
+    slips = _load_mock_data("pay_slips.json")
+    worker_slips = [s for s in slips if s.get("worker_id") == worker_id]
+    if not worker_slips:
+        return {"error": f"No payslips found for worker {worker_id}"}
+
+    if period:
+        match = next((s for s in worker_slips if s.get("period") == period), None)
+        if match:
+            return match
+        return {"error": f"No payslip found for worker {worker_id} for period '{period}'"}
+
+    return {"worker_id": worker_id, "payslips": worker_slips}
+
+
 if __name__ == "__main__":
     transport = os.environ.get("MCP_TRANSPORT", "streamable-http")
     host = os.environ.get("MCP_HOST", "0.0.0.0")

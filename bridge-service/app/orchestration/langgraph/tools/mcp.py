@@ -15,11 +15,13 @@ logger = logging.getLogger(__name__)
 DEFAULT_MCP_TOOL_ALLOWLIST = frozenset({
     "find_employee_id_by_name",
     "get_current_user_info",
+    "get_current_user_payslips",
     "get_current_user_time_off_balance",
     "get_current_user_time_off_history",
     "get_direct_reports",
     "get_more_employee_data",
     "get_my_time_off_eligibility",
+    "get_payslip_by_worker_id",
     "get_personal_information",
     "get_today_date_and_day_of_week",
     "request_my_time_off",

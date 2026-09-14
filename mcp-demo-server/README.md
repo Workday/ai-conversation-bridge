@@ -20,12 +20,14 @@ A lightweight MCP server with mock Workday tools for development and demo purpos
 | ----------------------------------- | ---------------------------------------------------- |
 | `find_employee_id_by_name`          | Look up an employee's worker ID by name              |
 | `get_current_user_info`             | Get the current user's profile                       |
+| `get_current_user_payslips`         | Get current user's payslip or history by period      |
 | `get_current_user_time_off_balance` | Get the current user's leave balances                |
 | `get_current_user_time_off_history` | Get the current user's leave request history         |
 | `get_time_off_balance`              | Get leave balances for any worker by ID              |
 | `get_direct_reports`                | List direct reports for a manager                    |
 | `get_more_employee_data`            | Get extended employee data                           |
 | `get_my_time_off_eligibility`       | Check which leave types the current user can request |
+| `get_payslip_by_worker_id`          | Get payslip for any worker by ID and period          |
 | `get_personal_information`          | Get personal info (address, emergency contact)       |
 | `get_today_date_and_day_of_week`    | Get the current date and time                        |
 | `request_my_time_off`               | Submit a time-off request for the current user       |
