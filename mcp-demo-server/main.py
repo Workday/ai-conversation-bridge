@@ -25,7 +25,7 @@ def _load_mock_data(filename):
     """Load a JSON mock-data file from the server's mock_data directory."""
     filepath = DATA_DIR / filename
     if filepath.exists():
-        with open(filepath) as f:
+        with open(filepath, encoding="utf-8") as f:
             return json.load(f)
     return []
 
