@@ -3,6 +3,8 @@
 import json
 import logging
 import os
+import re
+from collections import deque
 from datetime import datetime
 from pathlib import Path
 
@@ -13,7 +15,17 @@ logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).parent / "mock_data"
 
+# Dates must be exactly YYYY-MM-DD; strptime alone also accepts 2026-1-1.
+_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
 CURRENT_USER_WORKER_ID = os.environ.get("CURRENT_USER_WORKER_ID", "WK001")
+
+# Time-off requests submitted through request_my_time_off during this process's
+# lifetime. Kept in memory only (mock_data/ is never written), so they are lost on
+# restart; get_current_user_time_off_history merges them with the mock history.
+# Bounded so a long-running demo cannot grow it without limit: the oldest go first.
+_MAX_SUBMITTED_TIME_OFF = 500
+_submitted_time_off: deque[dict] = deque(maxlen=_MAX_SUBMITTED_TIME_OFF)
 
 mcp = FastMCP(
     "Workday Demo MCP Server",
@@ -101,13 +113,17 @@ def get_current_user_time_off_balance() -> dict:
 def get_current_user_time_off_history() -> dict:
     """Get the current user's time-off request history.
 
-    Returns all past and pending time-off requests.
+    Returns all past and pending time-off requests, including requests submitted
+    with request_my_time_off since the server started.
     """
-    history = _load_mock_data("time_off_history.json")
-    for record in history:
-        if record["worker_id"] == CURRENT_USER_WORKER_ID:
-            return record
-    return {"worker_id": CURRENT_USER_WORKER_ID, "history": []}
+    record = {"worker_id": CURRENT_USER_WORKER_ID, "history": []}
+    for candidate in _load_mock_data("time_off_history.json"):
+        if candidate["worker_id"] == CURRENT_USER_WORKER_ID:
+            record = candidate
+            break
+    submitted = [r for r in _submitted_time_off if r["worker_id"] == CURRENT_USER_WORKER_ID]
+    entries = [{k: v for k, v in r.items() if k != "worker_id"} for r in submitted]
+    return {**record, "history": [*record["history"], *entries]}
 
 
 @mcp.tool()
@@ -202,14 +218,39 @@ def request_my_time_off(start_date: str, end_date: str, time_off_type: str, reas
         end_date: End date in YYYY-MM-DD format
         time_off_type: Type of leave (e.g. "vacation", "sick", "personal")
         reason: Optional reason for the request
+
+    The request is recorded in memory for the life of the server process, so it
+    appears in get_current_user_time_off_history. It is not written to mock_data/.
     """
     valid_types = ["vacation", "sick", "personal", "marriage"]
     if time_off_type.lower() not in valid_types:
         return {"error": f"Invalid time-off type. Must be one of: {valid_types}"}
 
+    if not all(_DATE_RE.fullmatch(d or "") for d in (start_date, end_date)):
+        return {"error": "Invalid date. Use YYYY-MM-DD format for start_date and end_date."}
+    try:
+        start = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end = datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        return {"error": "Invalid date. Use YYYY-MM-DD format for start_date and end_date."}
+    if end < start:
+        return {"error": f"end_date ({end_date}) cannot be before start_date ({start_date})."}
+    days = (end - start).days + 1
+
+    request_id = f"TOR-{CURRENT_USER_WORKER_ID}-{start_date}"
+    _submitted_time_off.append({
+        "worker_id": CURRENT_USER_WORKER_ID,
+        "request_id": request_id,
+        "type": time_off_type.lower(),
+        "start_date": start_date,
+        "end_date": end_date,
+        "days": days,
+        "status": "pending",
+        "submitted_on": datetime.now().strftime("%Y-%m-%d"),
+    })
     return {
         "status": "submitted",
-        "request_id": f"TOR-{CURRENT_USER_WORKER_ID}-{start_date}",
+        "request_id": request_id,
         "worker_id": CURRENT_USER_WORKER_ID,
         "start_date": start_date,
         "end_date": end_date,
