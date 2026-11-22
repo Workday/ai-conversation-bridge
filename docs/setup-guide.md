@@ -2,10 +2,12 @@
 
 <p align="center"><sub>
   English |
-  <a href="../i18n/zh-Hans/docs/setup-guide.md">简体中文</a> |
-  <a href="../i18n/zh-Hant/docs/setup-guide.md">繁體中文</a> |
-  <a href="../i18n/ja/docs/setup-guide.md">日本語</a> |
-  <a href="../i18n/ko/docs/setup-guide.md">한국어</a>
+  简体中文 |
+  繁體中文 |
+  日本語 |
+  한국어
+  <br>
+  Translations of this guide are in progress. <a href="../CONTRIBUTING.md#translations">Help translate</a>.
 </sub></p>
 
 ---
