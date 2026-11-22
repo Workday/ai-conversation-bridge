@@ -64,6 +64,17 @@ class ResponseValidator:
             logger.critical("Canary token leak detected in model output; blocking response")
             return SECURITY_BLOCKED_RESPONSE
 
+        # Scan the full response before any truncation, so a hedge in the
+        # discarded tail still counts (and still blocks in fail-closed mode).
+        hedging_matches = [p.pattern for p in COMPILED_HEDGING if p.search(response_text)]
+        if hedging_matches and block_hedging:
+            logger.warning(
+                f"AI response contains hedging language: {hedging_matches}. "
+                "This may indicate the LLM answered from its own knowledge "
+                "instead of using a tool. Blocking response (fail closed)."
+            )
+            return FALLBACK_RESPONSE
+
         if len(response_text) > MAX_RESPONSE_LENGTH:
             logger.warning(
                 f"AI response exceeds max length ({len(response_text)} chars) — truncating"
@@ -78,19 +89,7 @@ class ResponseValidator:
                 truncated = truncated[:last_sentence + 1]
             response_text = truncated
 
-        hedging_matches = []
-        for pattern in COMPILED_HEDGING:
-            if pattern.search(response_text):
-                hedging_matches.append(pattern.pattern)
-
         if hedging_matches:
-            if block_hedging:
-                logger.warning(
-                    f"AI response contains hedging language: {hedging_matches}. "
-                    "This may indicate the LLM answered from its own knowledge "
-                    "instead of using a tool. Blocking response (fail closed)."
-                )
-                return FALLBACK_RESPONSE
             logger.warning(
                 f"AI response contains hedging language: {hedging_matches}. "
                 "This may indicate the LLM answered from its own knowledge "
