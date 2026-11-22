@@ -40,8 +40,17 @@ class ResponseValidator:
     """
 
     @staticmethod
-    def validate(response_text: str, user_message: str = "") -> str:
+    def validate(
+        response_text: str,
+        user_message: str = "",
+        block_hedging: bool = False,
+    ) -> str:
         """Validate and return the response, or replace it with a safe fallback.
+
+        When ``block_hedging`` is True, a response containing hedging language
+        is replaced with ``FALLBACK_RESPONSE`` (fail closed) instead of being
+        delivered with only a warning. It defaults to False so existing
+        deployments keep the warn-and-pass-through behavior.
 
         Returns the (possibly modified) response text.
         """
@@ -54,6 +63,17 @@ class ResponseValidator:
         if response_contains_canary_leak(response_text):
             logger.critical("Canary token leak detected in model output; blocking response")
             return SECURITY_BLOCKED_RESPONSE
+
+        # Scan the full response before any truncation, so a hedge in the
+        # discarded tail still counts (and still blocks in fail-closed mode).
+        hedging_matches = [p.pattern for p in COMPILED_HEDGING if p.search(response_text)]
+        if hedging_matches and block_hedging:
+            logger.warning(
+                f"AI response contains hedging language: {hedging_matches}. "
+                "This may indicate the LLM answered from its own knowledge "
+                "instead of using a tool. Blocking response (fail closed)."
+            )
+            return FALLBACK_RESPONSE
 
         if len(response_text) > MAX_RESPONSE_LENGTH:
             logger.warning(
@@ -69,16 +89,11 @@ class ResponseValidator:
                 truncated = truncated[:last_sentence + 1]
             response_text = truncated
 
-        hedging_matches = []
-        for pattern in COMPILED_HEDGING:
-            if pattern.search(response_text):
-                hedging_matches.append(pattern.pattern)
-
         if hedging_matches:
             logger.warning(
                 f"AI response contains hedging language: {hedging_matches}. "
                 "This may indicate the LLM answered from its own knowledge "
-                "instead of using a tool. Passing through with caveat."
+                "instead of using a tool. Passing through."
             )
 
         return response_text
