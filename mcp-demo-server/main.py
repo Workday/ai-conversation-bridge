@@ -3,6 +3,8 @@
 import json
 import logging
 import os
+import re
+from collections import deque
 from datetime import datetime
 from pathlib import Path
 
@@ -13,12 +15,17 @@ logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).parent / "mock_data"
 
+# Dates must be exactly YYYY-MM-DD; strptime alone also accepts 2026-1-1.
+_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
 CURRENT_USER_WORKER_ID = os.environ.get("CURRENT_USER_WORKER_ID", "WK001")
 
 # Time-off requests submitted through request_my_time_off during this process's
 # lifetime. Kept in memory only (mock_data/ is never written), so they are lost on
 # restart; get_current_user_time_off_history merges them with the mock history.
-_submitted_time_off: list[dict] = []
+# Bounded so a long-running demo cannot grow it without limit: the oldest go first.
+_MAX_SUBMITTED_TIME_OFF = 500
+_submitted_time_off: deque[dict] = deque(maxlen=_MAX_SUBMITTED_TIME_OFF)
 
 mcp = FastMCP(
     "Workday Demo MCP Server",
@@ -219,11 +226,18 @@ def request_my_time_off(start_date: str, end_date: str, time_off_type: str, reas
     if time_off_type.lower() not in valid_types:
         return {"error": f"Invalid time-off type. Must be one of: {valid_types}"}
 
-    request_id = f"TOR-{CURRENT_USER_WORKER_ID}-{start_date}"
+    if not all(_DATE_RE.fullmatch(d or "") for d in (start_date, end_date)):
+        return {"error": "Invalid date. Use YYYY-MM-DD format for start_date and end_date."}
     try:
-        days = (datetime.strptime(end_date, "%Y-%m-%d") - datetime.strptime(start_date, "%Y-%m-%d")).days + 1
+        start = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end = datetime.strptime(end_date, "%Y-%m-%d").date()
     except ValueError:
-        days = None
+        return {"error": "Invalid date. Use YYYY-MM-DD format for start_date and end_date."}
+    if end < start:
+        return {"error": f"end_date ({end_date}) cannot be before start_date ({start_date})."}
+    days = (end - start).days + 1
+
+    request_id = f"TOR-{CURRENT_USER_WORKER_ID}-{start_date}"
     _submitted_time_off.append({
         "worker_id": CURRENT_USER_WORKER_ID,
         "request_id": request_id,

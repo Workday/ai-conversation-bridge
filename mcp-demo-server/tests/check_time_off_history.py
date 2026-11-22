@@ -37,8 +37,11 @@ def main_check() -> None:
     assert len(main.get_current_user_time_off_history()["history"]) == baseline + 1
     assert main._load_mock_data("time_off_history.json")[0]["history"] == before["history"]
 
-    # A rejected request is not recorded.
+    # A rejected request is not recorded: bad type, unreadable date, reversed range.
     assert "error" in main.request_my_time_off("2026-05-22", "2026-05-23", "sabbatical")
+    assert "error" in main.request_my_time_off("not-a-date", "2026-05-23", "vacation")
+    assert "error" in main.request_my_time_off("2026-5-22", "2026-05-23", "vacation")
+    assert "error" in main.request_my_time_off("2026-05-22", "2026-05-20", "vacation")
     assert len(main.get_current_user_time_off_history()["history"]) == baseline + 1
 
     # Requests are per worker, including a worker with no mock history record.
@@ -49,6 +52,12 @@ def main_check() -> None:
     assert [e["request_id"] for e in other["history"]] == ["TOR-WK999-2026-07-01"], other
     main.CURRENT_USER_WORKER_ID = "WK001"
     assert len(main.get_current_user_time_off_history()["history"]) == baseline + 1
+
+    # The in-memory store is bounded: the oldest requests are dropped first.
+    main._submitted_time_off.clear()
+    for i in range(main._MAX_SUBMITTED_TIME_OFF + 5):
+        main.request_my_time_off("2026-08-01", "2026-08-01", "sick", str(i))
+    assert len(main._submitted_time_off) == main._MAX_SUBMITTED_TIME_OFF
 
     print("check_time_off_history: ok")
 
