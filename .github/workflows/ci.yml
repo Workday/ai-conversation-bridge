@@ -36,6 +36,17 @@ jobs:
             PYTHONPATH=. python "$f"
           done
 
+      - name: Install demo MCP server dependencies
+        run: pip install -r mcp-demo-server/requirements.txt
+
+      - name: Run demo MCP server check scripts
+        working-directory: mcp-demo-server
+        run: |
+          shopt -s nullglob
+          for f in tests/check_*.py; do
+            python "$f"
+          done
+
   docker-build:
     name: Docker build
     runs-on: ubuntu-latest
