@@ -116,6 +116,10 @@ def lineworks_callback():
         if message is None:
             return 'OK', 200
 
+        if not lw_client.validate_config():
+            current_app.logger.error("Missing one or more LINE WORKS environment variables.")
+            return 'Internal Server Error', 500
+
         if lineworks_adapter.is_over_length(message):
             lw_client.send_message(message.reply_target, {
                 "content": {
@@ -124,10 +128,6 @@ def lineworks_callback():
                 }
             })
             return 'OK', 200
-
-        if not lw_client.validate_config():
-            current_app.logger.error("Missing one or more LINE WORKS environment variables.")
-            return 'Internal Server Error', 500
 
         delivery_key = lineworks_adapter.idempotency_key(raw_body)
         if is_duplicate_delivery(delivery_key):
