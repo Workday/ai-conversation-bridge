@@ -15,6 +15,11 @@ DATA_DIR = Path(__file__).parent / "mock_data"
 
 CURRENT_USER_WORKER_ID = os.environ.get("CURRENT_USER_WORKER_ID", "WK001")
 
+# Time-off requests submitted through request_my_time_off during this process's
+# lifetime. Kept in memory only (mock_data/ is never written), so they are lost on
+# restart; get_current_user_time_off_history merges them with the mock history.
+_submitted_time_off: list[dict] = []
+
 mcp = FastMCP(
     "Workday Demo MCP Server",
     instructions="A demo MCP server with mock Workday tools for development and testing."
@@ -101,13 +106,17 @@ def get_current_user_time_off_balance() -> dict:
 def get_current_user_time_off_history() -> dict:
     """Get the current user's time-off request history.
 
-    Returns all past and pending time-off requests.
+    Returns all past and pending time-off requests, including requests submitted
+    with request_my_time_off since the server started.
     """
-    history = _load_mock_data("time_off_history.json")
-    for record in history:
-        if record["worker_id"] == CURRENT_USER_WORKER_ID:
-            return record
-    return {"worker_id": CURRENT_USER_WORKER_ID, "history": []}
+    record = {"worker_id": CURRENT_USER_WORKER_ID, "history": []}
+    for candidate in _load_mock_data("time_off_history.json"):
+        if candidate["worker_id"] == CURRENT_USER_WORKER_ID:
+            record = candidate
+            break
+    submitted = [r for r in _submitted_time_off if r["worker_id"] == CURRENT_USER_WORKER_ID]
+    entries = [{k: v for k, v in r.items() if k != "worker_id"} for r in submitted]
+    return {**record, "history": [*record["history"], *entries]}
 
 
 @mcp.tool()
@@ -202,14 +211,32 @@ def request_my_time_off(start_date: str, end_date: str, time_off_type: str, reas
         end_date: End date in YYYY-MM-DD format
         time_off_type: Type of leave (e.g. "vacation", "sick", "personal")
         reason: Optional reason for the request
+
+    The request is recorded in memory for the life of the server process, so it
+    appears in get_current_user_time_off_history. It is not written to mock_data/.
     """
     valid_types = ["vacation", "sick", "personal", "marriage"]
     if time_off_type.lower() not in valid_types:
         return {"error": f"Invalid time-off type. Must be one of: {valid_types}"}
 
+    request_id = f"TOR-{CURRENT_USER_WORKER_ID}-{start_date}"
+    try:
+        days = (datetime.strptime(end_date, "%Y-%m-%d") - datetime.strptime(start_date, "%Y-%m-%d")).days + 1
+    except ValueError:
+        days = None
+    _submitted_time_off.append({
+        "worker_id": CURRENT_USER_WORKER_ID,
+        "request_id": request_id,
+        "type": time_off_type.lower(),
+        "start_date": start_date,
+        "end_date": end_date,
+        "days": days,
+        "status": "pending",
+        "submitted_on": datetime.now().strftime("%Y-%m-%d"),
+    })
     return {
         "status": "submitted",
-        "request_id": f"TOR-{CURRENT_USER_WORKER_ID}-{start_date}",
+        "request_id": request_id,
         "worker_id": CURRENT_USER_WORKER_ID,
         "start_date": start_date,
         "end_date": end_date,
