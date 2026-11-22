@@ -202,10 +202,47 @@ def request_my_time_off(start_date: str, end_date: str, time_off_type: str, reas
         end_date: End date in YYYY-MM-DD format
         time_off_type: Type of leave (e.g. "vacation", "sick", "personal")
         reason: Optional reason for the request
+
+    Validates the date range (both dates parsed, end not before start), that the
+    leave type is in the user's eligibility, and that the requested days (counted
+    as inclusive calendar days) fit the available balance, or the annual
+    entitlement when the type has no balance record.
     """
     valid_types = ["vacation", "sick", "personal", "marriage"]
-    if time_off_type.lower() not in valid_types:
+    leave_type = time_off_type.lower()
+    if leave_type not in valid_types:
         return {"error": f"Invalid time-off type. Must be one of: {valid_types}"}
+
+    try:
+        start = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end = datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        return {"error": "Invalid date. Use YYYY-MM-DD format for start_date and end_date."}
+    if end < start:
+        return {"error": f"end_date ({end_date}) cannot be before start_date ({start_date})."}
+    days_requested = (end - start).days + 1
+
+    eligibility = next(
+        (e for e in _load_mock_data("time_off_eligibility.json") if e["worker_id"] == CURRENT_USER_WORKER_ID),
+        None,
+    )
+    if eligibility is None:
+        return {"error": "No eligibility data found for current user"}
+    entitlement = next((t for t in eligibility["eligible_types"] if t["code"] == leave_type), None)
+    if entitlement is None:
+        return {"error": f"Current user is not eligible for '{leave_type}' leave."}
+
+    balance = next(
+        (b for b in _load_mock_data("time_off_balances.json") if b["worker_id"] == CURRENT_USER_WORKER_ID),
+        None,
+    )
+    type_balance = (balance or {}).get("balances", {}).get(leave_type)
+    available = type_balance["available"] if type_balance else entitlement["days_per_year"]
+    if days_requested > available:
+        return {
+            "error": f"Insufficient {leave_type} balance: {days_requested} day(s) requested, "
+            f"{available} available."
+        }
 
     return {
         "status": "submitted",
