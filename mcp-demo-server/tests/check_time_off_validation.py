@@ -34,6 +34,8 @@ def main_check() -> None:
     # Date parsing and ordering.
     assert "Invalid date" in _error(start_date="not-a-date", end_date="2026-05-01", time_off_type="vacation")
     assert "Invalid date" in _error(start_date="2026-05-01", end_date="2026-13-40", time_off_type="vacation")
+    assert "Invalid date" in _error(start_date="2026-5-1", end_date="2026-05-02", time_off_type="vacation")
+    assert "Invalid date" in _error(start_date="2026-05-01", end_date="2026-05-02T00:00", time_off_type="vacation")
     assert "cannot be before" in _error(start_date="2026-05-10", end_date="2026-05-01", time_off_type="vacation")
 
     # Balance: personal has 2 available, so 3 inclusive days is too many.

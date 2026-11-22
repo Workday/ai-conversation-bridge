@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -12,6 +13,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).parent / "mock_data"
+
+# Dates must be exactly YYYY-MM-DD; strptime alone also accepts 2026-1-1.
+_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 CURRENT_USER_WORKER_ID = os.environ.get("CURRENT_USER_WORKER_ID", "WK001")
 
@@ -213,6 +217,8 @@ def request_my_time_off(start_date: str, end_date: str, time_off_type: str, reas
     if leave_type not in valid_types:
         return {"error": f"Invalid time-off type. Must be one of: {valid_types}"}
 
+    if not all(_DATE_RE.fullmatch(d or "") for d in (start_date, end_date)):
+        return {"error": "Invalid date. Use YYYY-MM-DD format for start_date and end_date."}
     try:
         start = datetime.strptime(start_date, "%Y-%m-%d").date()
         end = datetime.strptime(end_date, "%Y-%m-%d").date()
