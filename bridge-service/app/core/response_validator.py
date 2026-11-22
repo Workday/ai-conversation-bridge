@@ -40,8 +40,17 @@ class ResponseValidator:
     """
 
     @staticmethod
-    def validate(response_text: str, user_message: str = "") -> str:
+    def validate(
+        response_text: str,
+        user_message: str = "",
+        block_hedging: bool = False,
+    ) -> str:
         """Validate and return the response, or replace it with a safe fallback.
+
+        When ``block_hedging`` is True, a response containing hedging language
+        is replaced with ``FALLBACK_RESPONSE`` (fail closed) instead of being
+        delivered with only a warning. It defaults to False so existing
+        deployments keep the warn-and-pass-through behavior.
 
         Returns the (possibly modified) response text.
         """
@@ -75,10 +84,17 @@ class ResponseValidator:
                 hedging_matches.append(pattern.pattern)
 
         if hedging_matches:
+            if block_hedging:
+                logger.warning(
+                    f"AI response contains hedging language: {hedging_matches}. "
+                    "This may indicate the LLM answered from its own knowledge "
+                    "instead of using a tool. Blocking response (fail closed)."
+                )
+                return FALLBACK_RESPONSE
             logger.warning(
                 f"AI response contains hedging language: {hedging_matches}. "
                 "This may indicate the LLM answered from its own knowledge "
-                "instead of using a tool. Passing through with caveat."
+                "instead of using a tool. Passing through."
             )
 
         return response_text

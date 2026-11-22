@@ -110,6 +110,11 @@ class Config:
     # Security
     MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 1 * 1024 * 1024))  # 1 MB
     MAX_MESSAGE_LENGTH = int(os.environ.get('MAX_MESSAGE_LENGTH', 2000))
+    # When true, replies containing hedging language ("I think", "probably", ...)
+    # are replaced with the safe fallback instead of only being logged.
+    BLOCK_HEDGED_RESPONSES = (
+        os.environ.get('BLOCK_HEDGED_RESPONSES', 'false').lower() == 'true'
+    )
 
     @classmethod
     def validate_for_orchestrator(cls) -> None:

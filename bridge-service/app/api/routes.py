@@ -62,6 +62,7 @@ def get_ai_response(user_text: str, session_id: str) -> str:
     return ResponseValidator.validate(
         str(result.text) if result.text else "",
         user_message=user_text,
+        block_hedging=Config.BLOCK_HEDGED_RESPONSES,
     )
 
 
