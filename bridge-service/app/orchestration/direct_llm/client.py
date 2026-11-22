@@ -7,6 +7,7 @@ restarts and is not shared across multiple Gunicorn workers.
 
 import logging
 import time
+from collections import OrderedDict
 from datetime import datetime
 
 import httpx
@@ -17,11 +18,21 @@ from app.orchestration.errors import FailureCode
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_MAX_SESSIONS = 1000
+
 
 class DirectLLMClient:
     """Demo/experiment orchestrator via OpenAI Chat Completions."""
 
-    def __init__(self, api_key, model, api_url, system_prompt=None, reasoning_effort=None):
+    def __init__(
+        self,
+        api_key,
+        model,
+        api_url,
+        system_prompt=None,
+        reasoning_effort=None,
+        max_sessions=DEFAULT_MAX_SESSIONS,
+    ):
         """Store credentials, model selection, and in-memory history settings."""
         self.api_key = api_key
         self.model = model
@@ -29,8 +40,11 @@ class DirectLLMClient:
         self.base_system_prompt = system_prompt
         self.reasoning_effort = reasoning_effort
 
-        self.chat_history = {}
+        # Least-recently-used sessions are evicted once max_sessions is exceeded,
+        # so a public webhook cannot grow process memory without bound.
+        self.chat_history = OrderedDict()
         self.history_limit = 10
+        self.max_sessions = max_sessions
         self._client = httpx.AsyncClient(timeout=120.0)
 
     async def aclose(self) -> None:
@@ -39,8 +53,12 @@ class DirectLLMClient:
 
     def _get_user_history(self, user_id):
         """Return the in-memory chat history list for a user, creating it if needed."""
-        if user_id not in self.chat_history:
+        if user_id in self.chat_history:
+            self.chat_history.move_to_end(user_id)
+        else:
             self.chat_history[user_id] = []
+            while len(self.chat_history) > self.max_sessions:
+                self.chat_history.popitem(last=False)
         return self.chat_history[user_id]
 
     def _append_to_history(self, user_id, role, content):
