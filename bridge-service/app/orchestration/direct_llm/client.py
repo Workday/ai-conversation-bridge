@@ -34,6 +34,8 @@ class DirectLLMClient:
         max_sessions=DEFAULT_MAX_SESSIONS,
     ):
         """Store credentials, model selection, and in-memory history settings."""
+        if isinstance(max_sessions, bool) or not isinstance(max_sessions, int) or max_sessions < 1:
+            raise ValueError(f"max_sessions must be a positive integer, got {max_sessions!r}")
         self.api_key = api_key
         self.model = model
         self.api_url = api_url
@@ -67,7 +69,9 @@ class DirectLLMClient:
         history.append({"role": role, "content": content})
 
         if len(history) > self.history_limit:
-            self.chat_history[user_id] = history[-self.history_limit:]
+            # Trim in place so the list keeps its identity; invoke() relies on that
+            # to tell a live session from one that was evicted and recreated.
+            del history[:-self.history_limit]
 
     def _get_dynamic_system_prompt(self):
         """Build the system prompt with date and security guardrails."""
@@ -98,9 +102,11 @@ class DirectLLMClient:
         messages = [{"role": "system", "content": self._get_dynamic_system_prompt()}]
         user_id = request.session_id
 
+        history = None
         if user_id:
             self._append_to_history(user_id, "user", request.message)
-            messages.extend(self._get_user_history(user_id))
+            history = self._get_user_history(user_id)
+            messages.extend(history)
         else:
             messages.append({"role": "user", "content": request.message})
 
@@ -120,7 +126,10 @@ class DirectLLMClient:
                 ai_text = data['choices'][0]['message']['content']
                 if ai_text:
                     ai_text = ai_text.strip()
-                if user_id:
+                # Record the reply only if this session was not evicted (and perhaps
+                # recreated) while the request was in flight; otherwise it would seed
+                # a session with an orphan assistant turn or someone's fresh history.
+                if user_id and self.chat_history.get(user_id) is history:
                     self._append_to_history(user_id, "assistant", ai_text)
                 logger.info(f"Direct LLM responded in {elapsed:.1f}s")
                 return OrchestrationResult(text=ai_text)
