@@ -7,6 +7,7 @@ import logging
 
 from app.channels.base import InboundMessage
 from app.channels.lineworks.client import LineWorksClient
+from app.core.log_redaction import redact_identifier
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ class LineWorksAdapter:
 
         if len(user_text) > self.max_message_length:
             logger.warning(
-                f"Message from {user_id} exceeds max length "
+                f"Message from {redact_identifier(user_id)} exceeds max length "
                 f"({len(user_text)} > {self.max_message_length})"
             )
             return InboundMessage(

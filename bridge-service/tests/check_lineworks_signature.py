@@ -23,8 +23,12 @@ def _load_adapter():
     base_module.InboundMessage = object
     client_module = types.ModuleType("app.channels.lineworks.client")
     client_module.LineWorksClient = object
+    redaction_module = types.ModuleType("app.core.log_redaction")
+    redaction_module.redact_identifier = lambda value: "redacted"
     sys.modules.update({
         "app": types.ModuleType("app"),
+        "app.core": types.ModuleType("app.core"),
+        "app.core.log_redaction": redaction_module,
         "app.channels": types.ModuleType("app.channels"),
         "app.channels.base": base_module,
         "app.channels.lineworks.client": client_module,
