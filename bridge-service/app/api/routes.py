@@ -6,6 +6,7 @@ from flask import Blueprint, current_app, jsonify, request
 
 from app.config import Config
 from app.core import async_runner
+from app.core.log_redaction import redact_identifier
 from app.core.messages import user_message_for
 from app.core.prompt_security import wrap_user_input
 from app.core.response_validator import ResponseValidator
@@ -109,7 +110,8 @@ def lineworks_callback():
             return 'Bad Request', 400
 
         current_app.logger.info(
-            f"Received callback from user: {data.get('source', {}).get('userId', 'unknown')}"
+            "Received callback from user: %s",
+            redact_identifier((data.get('source') or {}).get('userId')),
         )
 
         message = lineworks_adapter.parse_inbound(data)
@@ -144,7 +146,9 @@ def lineworks_callback():
             }
 
             lw_client.send_message(message.reply_target, reply_content)
-            current_app.logger.info(f"Sent reply to user {message.sender_id}")
+            current_app.logger.info(
+                "Sent reply to user %s", redact_identifier(message.sender_id)
+            )
         except TimeoutError:
             release_delivery(delivery_key)
             lw_client.send_message(message.reply_target, {

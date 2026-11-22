@@ -6,7 +6,12 @@ from datetime import datetime
 import httpx
 import jwt
 
+from app.core.log_redaction import install_httpx_redaction, redact_identifier
+
 logger = logging.getLogger(__name__)
+
+# The send URL contains the user id, and httpx logs request URLs at INFO.
+install_httpx_redaction()
 
 
 class LineWorksClient:
@@ -112,4 +117,10 @@ class LineWorksClient:
         }
 
         r = httpx.post(url=url, json=content, headers=headers, timeout=30.0)
-        r.raise_for_status()
+        try:
+            r.raise_for_status()
+        except httpx.HTTPStatusError:
+            # The default message repeats the URL, which carries the raw user id.
+            raise RuntimeError(
+                f"LINE WORKS send to {redact_identifier(user_id)} failed with HTTP {r.status_code}"
+            ) from None
