@@ -130,6 +130,8 @@ def get_direct_reports(worker_id: str = "") -> list[dict]:
 
     Args:
         worker_id: The manager's worker ID. If empty, uses the current user.
+
+    Returns a list of direct reports, or an empty list if the manager has none.
     """
     manager_id = worker_id or CURRENT_USER_WORKER_ID
     workers = _load_mock_data("workers.json")
@@ -138,8 +140,6 @@ def get_direct_reports(worker_id: str = "") -> list[dict]:
         for w in workers
         if w.get("manager_id") == manager_id
     ]
-    if not reports:
-        return [{"message": f"No direct reports found for {manager_id}"}]
     return reports
 
 
