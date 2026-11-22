@@ -11,7 +11,7 @@ echo ""
 
 # Check prerequisites
 command -v docker >/dev/null 2>&1 || { echo "Error: Docker is required but not installed."; exit 1; }
-command -v docker compose >/dev/null 2>&1 || { echo "Error: Docker Compose is required but not installed."; exit 1; }
+docker compose version >/dev/null 2>&1 || { echo "Error: Docker Compose is required but not installed."; exit 1; }
 
 echo "Prerequisites OK (Docker, Docker Compose)"
 echo ""
