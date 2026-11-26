@@ -85,7 +85,10 @@ async def load_mcp_tools(
         name, colon, value = auth_value.partition(":")
         name = name.strip()
         if colon and name and not any(char.isspace() for char in name):
-            headers["Authorization" if name.lower() == "authorization" else name] = value.strip()
+            name = "Authorization" if name.lower() == "authorization" else name
+            value = value.strip()
+            if name != "Authorization" or value:
+                headers[name] = value
         elif len(auth_value.split(maxsplit=1)) == 1:
             headers["Authorization"] = f"Bearer {auth_value}"
         else:
