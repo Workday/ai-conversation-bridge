@@ -80,20 +80,16 @@ async def load_mcp_tools(
     """Discover MCP tools once, filter to the configured allowlist, and return LangChain tools."""
     allowed_names = parse_mcp_tool_allowlist(tool_allowlist)
     headers = {}
-    if auth_header:
-        # Accept either a full "Authorization: Bearer …" value or a raw token.
-        if ":" in auth_header and not auth_header.lower().startswith("authorization"):
-            # "Authorization: Bearer x" style already
-            name, _, value = auth_header.partition(":")
-            headers[name.strip()] = value.strip()
-        elif auth_header.lower().startswith("bearer ") or auth_header.lower().startswith("authorization"):
-            headers["Authorization"] = (
-                auth_header.split(":", 1)[-1].strip()
-                if auth_header.lower().startswith("authorization")
-                else auth_header
-            )
+    auth_value = (auth_header or "").strip()
+    if auth_value:
+        name, colon, value = auth_value.partition(":")
+        name = name.strip()
+        if colon and name and not any(char.isspace() for char in name):
+            headers["Authorization" if name.lower() == "authorization" else name] = value.strip()
+        elif len(auth_value.split(maxsplit=1)) == 1:
+            headers["Authorization"] = f"Bearer {auth_value}"
         else:
-            headers["Authorization"] = auth_header
+            headers["Authorization"] = auth_value
 
     connection: dict = {
         "transport": "streamable_http",
